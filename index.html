@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="道の気配MAP｜東広島市（仮称）— 公開情報を用いた交通事故と道路交通量を見て、地域を調べる Viewer">
-<title>道の気配MAP｜東広島市（仮称） Viewer v0.6.34.1 共有する気づき</title>
+<title>道の気配MAP｜東広島市（仮称） Viewer v0.6.34.5 共有する気づき</title>
 <style>
 :root{--bg:#f5f7fa;--panel:#fff;--text:#1f2937;--muted:#667085;--line:#d0d5dd;--blue:#175cd3}
 *{box-sizing:border-box}
@@ -498,7 +498,7 @@ header{height:72px;padding:8px 14px;background:#111827}
       <div class="legacy">旧「東広島市 交通事故ビューア」／名称変更案・未確定</div>
     </div>
   </div>
-  <div class="viewerBadge"><i></i> Viewer v0.6.34.1｜地域調査・共有</div>
+  <div class="viewerBadge"><i></i> Viewer v0.6.34.5｜地域調査・共有</div>
 </header>
 <div id="app">
 <aside id="side">
@@ -542,7 +542,7 @@ header{height:72px;padding:8px 14px;background:#111827}
   </div>
   <div class="viewerRangeHint">
     現在の表示モードを保ったまま、気になる範囲を多角形で囲んで集計します。3点以上で確定できます。
-    選択すると、上の件数とグラフがその範囲内へ切り替わり、集計結果ポップアップが開きます。件数ラベルは事故点や集計ドーナツを避けて多角形内の空き領域へ自動配置します。
+    選択すると、上の件数とグラフはその範囲だけを集計し、結果ポップアップが開きます。地図上の事故点・道路交通量は範囲外もそのまま表示します。件数ラベルは事故点や集計ドーナツを避けて多角形内の空き領域へ自動配置します。
   </div>
   <div class="viewerRangeActions">
     <button id="viewerPolygonStart" type="button">多角形で囲む</button>
@@ -559,7 +559,7 @@ header{height:72px;padding:8px 14px;background:#111827}
   <div class="viewerRangeFirstHint" id="viewerRangeFirstHint" hidden>
     <div class="viewerRangeFirstHintTop">
       <div><b>選択した範囲はそのまま使えます</b><br>
-      地図内の「○件」をクリックすると集計結果を再表示できます。個別事故点／集計の切替や、人対車両・自転車関与など個別事故点の絞り込みを変更しても、多角形と集計結果ポップアップは保持されます。</div>
+      地図内の「○件」をクリックすると集計結果を再表示できます。個別事故点は周辺も含めてすべて表示され、範囲は件数・集計のみを限定します。表示切替や絞り込みを変更しても多角形と結果ポップアップは保持されます。</div>
       <button class="viewerRangeHintDismiss" id="viewerRangeHintDismiss" type="button">わかりました</button>
     </div>
   </div>
@@ -1375,7 +1375,7 @@ function syncViewerPolygonUI(){
     const s=areaSummary(currentArea);
     viewerPolygonStatus.className='viewerRangeStatus selected';
     viewerPolygonStatus.textContent=modeSel.value==='points'
-      ?`選択範囲：${s.n.toLocaleString()}件・${currentArea.points.length}頂点。個別事故点モードを維持し、この多角形の中だけを表示しています。`
+      ?`選択範囲：${s.n.toLocaleString()}件・${currentArea.points.length}頂点。事故点は範囲外も表示し、件数・集計のみこの範囲を対象にしています。`
       :`選択範囲：${s.n.toLocaleString()}件・${currentArea.points.length}頂点。集計モードを維持し、上の件数とグラフはこの範囲に連動しています。`;
   }else{
     viewerPolygonStatus.className='viewerRangeStatus';
@@ -1724,6 +1724,97 @@ function chooseSmartAreaBadgePoint(area,w,h){
   const best=scoreCandidates(true)||scoreCandidates(false);
   return best ? best.ll : fallback;
 }
+// v0.6.34.4 / Analysis r6: Count labels are map pointers, not data masks.
+// Evaluate positions just OUTSIDE the area first so individual accident dots
+// and road features inside the selection stay accessible.
+const drawnAreaBadgeRects=[];
+function areaBadgeOuterPlacement(area,w,h){
+  if(!area)return null;
+  const g=mapGeom();
+  let outline=[];
+  if(area.shape==='polygon' && area.points && area.points.length>=3){
+    outline=area.points.map(screenOfLatLon);
+  }else{
+    const b=getAreaBounds(area);
+    if(!b)return null;
+    outline=[
+      screenOfLatLon({lat:b.minLat,lon:b.minLon}),
+      screenOfLatLon({lat:b.minLat,lon:b.maxLon}),
+      screenOfLatLon({lat:b.maxLat,lon:b.maxLon}),
+      screenOfLatLon({lat:b.maxLat,lon:b.minLon})
+    ];
+  }
+  if(!outline.length)return null;
+  const xs=outline.map(p=>p.x),ys=outline.map(p=>p.y);
+  const minX=Math.min(...xs),maxX=Math.max(...xs);
+  const minY=Math.min(...ys),maxY=Math.max(...ys);
+  // Offscreen candidates must not replace an offscreen selection with a false locator.
+  if(maxX<0||minX>g.w||maxY<0||minY>g.h)return null;
+  const midX=(minX+maxX)/2,midY=(minY+maxY)/2;
+  const boxGap=12;
+  const candidates=[];
+  const push=(x,y)=>{
+    if(x-w/2<7||x+w/2>g.w-7||y-h/2<7||y+h/2>g.h-7)return;
+    candidates.push({x,y});
+  };
+  for(const t of [.25,.5,.75]){
+    const px=minX+(maxX-minX)*t, py=minY+(maxY-minY)*t;
+    push(px,minY-h/2-boxGap);push(px,maxY+h/2+boxGap);
+    push(minX-w/2-boxGap,py);push(maxX+w/2+boxGap,py);
+  }
+  // Irregular or diagonal polygons benefit from edge-local candidate positions.
+  if(area.shape==='polygon'){
+    for(let i=0;i<outline.length;i++){
+      const a=outline[i],b=outline[(i+1)%outline.length];
+      const x=(a.x+b.x)/2,y=(a.y+b.y)/2;
+      const vx=x-midX,vy=y-midY,d=Math.hypot(vx,vy)||1;
+      const shift=Math.max(w,h)/2+14;
+      push(x+vx/d*shift,y+vy/d*shift);
+    }
+  }
+  // Use a nearest boundary point for the short, unobtrusive leader line.
+  const boundaryNearest=(x,y)=>{
+    let best=null,dist=Infinity;
+    for(let i=0;i<outline.length;i++){
+      const a=outline[i],b=outline[(i+1)%outline.length];
+      const dx=b.x-a.x,dy=b.y-a.y;
+      const t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1)));
+      const pt={x:a.x+t*dx,y:a.y+t*dy};
+      const d=Math.hypot(x-pt.x,y-pt.y);
+      if(d<dist){dist=d;best=pt;}
+    }
+    return {point:best,dist};
+  };
+  let best=null;
+  for(const c of candidates){
+    const ll=pixelToLatLon(c.x,c.y);
+    // Only markers outside the selected polygon are eligible.
+    if(area.shape==='polygon'&&pointInPolygon(ll.lat,ll.lon,area.points))continue;
+    const m=badgeObstacleMetrics(c.x,c.y,w,h);
+    let overlapCount=0;
+    for(const r of drawnAreaBadgeRects){
+      if(c.x+w/2>r.x-5&&c.x-w/2<r.x+r.w+5&&c.y+h/2>r.y-5&&c.y-h/2<r.y+r.h+5)overlapCount++;
+    }
+    // Preserve the saved area NAME (shown near the top-left boundary).
+    const name=String(area.name||'');
+    const labelW=Math.min(300,Math.max(90,name.length*12+12));
+    const conflictsName=(c.x+w/2>minX-4&&c.x-w/2<minX+labelW&&c.y+h/2>minY-29&&c.y-h/2<minY+5);
+    const near=boundaryNearest(c.x,c.y);
+    const score=(m.collisions+overlapCount)*1e7 + m.overlapDepth*50000 +
+      (conflictsName?1e8:0) + near.dist*.8 - Math.min(100,m.minClear)*4;
+    if(!best||score<best.score)best={...c,score,anchor:near.point,ll};
+  }
+  return best;
+}
+function drawAreaBadgeLeader(placement,w,h,color){
+  if(!placement||!placement.anchor)return;
+  const a=placement.anchor;
+  const x=Math.max(placement.x-w/2,Math.min(a.x,placement.x+w/2));
+  const y=Math.max(placement.y-h/2,Math.min(a.y,placement.y+h/2));
+  ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=.68;ctx.lineWidth=1.3;
+  ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();ctx.restore();
+}
+
 function areaBadgeMetrics(area,codeText){
   const summary=areaSummary(area);
   const main=`${summary.n.toLocaleString()}件`;
@@ -1774,12 +1865,15 @@ function renderCurrentAreaBadgeOverlay(area,color,code,p,metrics){
 function drawAreaCountBadge(area,color,code){
   const codeText=code||'';
   const metrics=areaBadgeMetrics(area,codeText);
-  let p=areaRepresentativePoint(area);
-
-  if(area===currentArea&&area.shape==='polygon'){
-    p=chooseSmartAreaBadgePoint(area,metrics.w,metrics.h)||p;
-  }
+  // Saved, compared and temporary areas all share the same non-occluding policy.
+  // Place the count label outside the area where a readable spot is available.
+  const placement=areaBadgeOuterPlacement(area,metrics.w,metrics.h);
+  let p=placement ? placement.ll : (chooseSmartAreaBadgePoint(area,metrics.w,metrics.h)||areaRepresentativePoint(area));
   if(!p)return;
+  if(placement){
+    drawAreaBadgeLeader(placement,metrics.w,metrics.h,color);
+    drawnAreaBadgeRects.push({x:placement.x-metrics.w/2,y:placement.y-metrics.h/2,w:metrics.w,h:metrics.h});
+  }
 
   // Current Viewer selection is drawn above connector lines but below popups.
   if(area===currentArea&&area.shape==='polygon'){
@@ -1866,6 +1960,7 @@ function drawPolygonDraft(){
 }
 function drawAreaOverlays(){
   badgeLayer.innerHTML='';
+  drawnAreaBadgeRects.length=0;
   if(!currentArea){
     currentAreaBadgePoint=null;
     currentAreaBadgeHit=null;
@@ -2433,7 +2528,7 @@ function drawGrid(g){
  for(let y=0;y<g.h;y+=100){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(g.w,y);ctx.stroke()}
  ctx.restore();
 }
-function drawIndividualPointGlyph(r,p,{radius=3.2,muted=false,highlight=false,bicycleStrong=false}={}){
+function drawIndividualPointGlyph(r,p,{radius=3.7,muted=false,highlight=false,bicycleStrong=false}={}){
   const bicycle=isBicycleParty(r.partyA)||isBicycleParty(r.partyB);
   const showBicycleRing=bicycle&&bicycleStrong;
   const bicyclePurple=DONUT_METRICS.bicycle.color;
@@ -2446,6 +2541,15 @@ function drawIndividualPointGlyph(r,p,{radius=3.2,muted=false,highlight=false,bi
   ctx.fillStyle=muted?'rgba(107,114,128,.24)':colorFor(r.type);
   ctx.globalAlpha=muted?1:(highlight?.96:.72);
   ctx.fill();
+
+  // Always outline accident points so they stay legible over road lines,
+  // terrain and traffic-census segments, without changing data layers.
+  ctx.globalAlpha=1;
+  ctx.beginPath();
+  ctx.arc(p.x,p.y,radius+.12,0,Math.PI*2);
+  ctx.strokeStyle=muted?'rgba(255,255,255,.92)':'rgba(255,255,255,1)';
+  ctx.lineWidth=highlight?1.35:(muted?0.95:1.1);
+  ctx.stroke();
 
   // Bicycle involvement is shown only when the user explicitly selects
   // the bicycle-involvement filter. This keeps the default "all" view
@@ -2468,11 +2572,6 @@ function drawIndividualPointGlyph(r,p,{radius=3.2,muted=false,highlight=false,bi
 
   if(highlight){
     ctx.globalAlpha=1;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,radius+.25,0,Math.PI*2);
-    ctx.strokeStyle='rgba(255,255,255,.96)';
-    ctx.lineWidth=1.15;
-    ctx.stroke();
 
     if(showBicycleRing){
       ctx.beginPath();
@@ -2494,21 +2593,24 @@ function drawIndividualPointGlyph(r,p,{radius=3.2,muted=false,highlight=false,bi
 function drawIndividualPoints(){
  const g=mapGeom();hitPoints=[];hitDonuts=[];
  const focus=typeSel.value;
- const polygonScoped=!!(currentArea&&currentArea.shape==='polygon');
- const baseRows=polygonScoped ? active.filter(r=>areaContains(currentArea,r)) : active;
+ // Viewer: polygon selection is an ANALYSIS scope, never an accident-map mask.
+ // Keep every accident glyph visible so proposals, road census and surrounding
+ // accident distributions can be examined together. Area summaries still use
+ // recordsForArea(currentArea) and are unaffected by this rendering rule.
+ const baseRows=active;
  const focusRows=focus ? baseRows.filter(r=>pointFilterMatch(r,focus)) : baseRows;
 
  for(const r of baseRows){
    if(focus && pointFilterMatch(r,focus))continue;
    const p=screenPos(r,g);if(p.x<-8||p.y<-8||p.x>g.w+8||p.y>g.h+8)continue;
-   drawIndividualPointGlyph(r,p,{radius:focus?2.3:3.2,muted:!!focus,highlight:false,bicycleStrong:false});
+   drawIndividualPointGlyph(r,p,{radius:focus?2.6:3.7,muted:!!focus,highlight:false,bicycleStrong:false});
    hitPoints.push({x:p.x,y:p.y,r,rank:0});
  }
  if(focus){
    const bicycleFocus=focus==='__bicycle__';
    for(const r of focusRows){
      const p=screenPos(r,g);if(p.x<-14||p.y<-14||p.x>g.w+14||p.y>g.h+14)continue;
-     drawIndividualPointGlyph(r,p,{radius:5.2,muted:false,highlight:true,bicycleStrong:bicycleFocus});
+     drawIndividualPointGlyph(r,p,{radius:5.6,muted:false,highlight:true,bicycleStrong:bicycleFocus});
      hitPoints.push({x:p.x,y:p.y,r,rank:1});
    }
  }
@@ -2741,9 +2843,9 @@ function updateStats(){
  document.getElementById('pct').textContent=p.toFixed(1)+'%';
  document.getElementById('pie').style.background=`conic-gradient(${color} 0deg ${p*3.6}deg,#e5e7eb ${p*3.6}deg 360deg)`;
  if(usingPolygon){
-   statsScopeLabel.textContent='選択した範囲に入っている事故';
+   statsScopeLabel.textContent='選択した範囲に入っている事故（地図上は全事故点を表示）';
    totalVisibleLabel.textContent='選択範囲の事故';
-   pieScopeNote.textContent='選択した多角形内';
+   pieScopeNote.textContent='集計のみ多角形内・地図表示は全域';
  }else{
    statsScopeLabel.textContent='現在の表示画面に入っている事故';
    totalVisibleLabel.textContent='表示画面の事故';
@@ -3174,7 +3276,7 @@ function configureRangeModeSwitchButton(card){
     btn.title='多角形を保持したまま集計表示へ切り替える';
   }else{
     btn.textContent='個別事故点で見る';
-    btn.title='多角形を保持したまま、その範囲内の個別事故点を表示する';
+    btn.title='多角形を保持したまま、周辺を含む全個別事故点と交通量を重ねて表示する（範囲集計は保持）';
   }
 }
 function showViewerRangePopup(){
