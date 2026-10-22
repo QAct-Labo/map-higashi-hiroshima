@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="道の気配MAP｜東広島市（仮称）— 公開情報を用いた交通事故と道路交通量を見て、地域を調べる Viewer">
-<title>道の気配MAP｜東広島市（仮称） Viewer v0.7.0 UI試験版</title>
+<title>道の気配MAP｜東広島市 Viewer MAP7 フロートUI試験版 v0.7.1</title>
 <style>
 :root{--bg:#f5f7fa;--panel:#fff;--text:#1f2937;--muted:#667085;--line:#d0d5dd;--blue:#175cd3}
 *{box-sizing:border-box}
@@ -487,52 +487,79 @@ header{height:72px;padding:8px 14px;background:#111827}
 .kpPopupBody .kpPill{display:inline-block;border:1px solid #a5c7c3;border-radius:20px;padding:2px 7px;font-size:9px;background:#f0fdfa;color:#12564f}
 .kpPopupBody button{font-size:10px;padding:7px 6px;margin-top:7px;cursor:pointer}
 
-/* v0.7.0 mobile/PC UI experiment: original geographic and audit data untouched */
-#ui07Switch{display:flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0}
-#ui07Switch button{width:auto;margin:0!important;padding:8px 11px;border-radius:7px;border:1px solid #667085;background:#263445;color:#fff;font-size:11px;white-space:nowrap}
-#ui07Switch button[aria-pressed="true"]{background:#e7f6f2;color:#07574f;border-color:#87cbc0}
-#ui07PanelBtn{display:none!important}
-#ui07Bottom{display:none}
-#ui07Notice{font-size:10px;color:#164e57;background:#e8f7f3;border:1px solid #9ccbc7;border-radius:7px;padding:8px;margin-bottom:10px;line-height:1.5}
-#ui07Overlay{display:none}
-body.ui07-focus #app{grid-template-columns:0 minmax(0,1fr)}
-body.ui07-focus #side{padding:0;border:0;overflow:hidden;visibility:hidden}
-body.ui07-focus #ui07PanelBtn{display:block!important}
-body.ui07-focus header{position:relative;z-index:41}
-body.ui07-focus #map{min-width:0}
-@media(max-width:760px){
- html,body{height:100%;height:100dvh;overflow:hidden}
- header{height:67px!important;min-height:67px;padding:5px 9px;gap:6px}
- #app{height:calc(100dvh - 67px)!important;display:block!important;position:relative}
- .brandMark{width:31px;height:31px}.brandHead{gap:6px}
- .brandTitle h1{font-size:12.5px}.brandTitle .tagline{font-size:8px}.brandTitle .legacy{display:none}
- .viewerBadge{display:none}
- #ui07Switch{gap:3px}
- #ui07Switch button{font-size:9px;padding:7px 6px}
- #ui07PanelBtn{display:block!important}
- #side{position:absolute;top:0;left:0;bottom:0;width:min(90vw,380px);max-height:none!important;z-index:36;overflow-y:auto;background:white;border:0;box-shadow:5px 0 22px #0003;transform:translateX(-103%);transition:transform .18s ease;visibility:visible!important;padding:12px 12px 90px!important}
- body.ui07-panel-open #side{transform:translateX(0)}
- #map{position:absolute;inset:0;min-width:0;min-height:0}
- #ui07Overlay{display:none;position:absolute;inset:0;z-index:35;background:#0005}
- body.ui07-panel-open #ui07Overlay{display:block}
- #ui07Bottom{display:flex;position:absolute;left:10px;right:10px;bottom:10px;z-index:24;gap:7px;pointer-events:none}
- #ui07Bottom button{pointer-events:auto;flex:1;background:#fff;color:#175cd3;border:1px solid #a1c4df;border-radius:9px;box-shadow:0 2px 8px #0002;font-size:12px;min-height:43px;margin:0!important}
- #ui07Bottom .primary{background:#0f766e;color:white;border-color:#0f766e}
- .mapctrl{top:10px;right:8px;gap:5px}
- .mapctrl button{width:36px;height:36px}.mapctrl button.mapExternal{min-width:76px;font-size:9px}
- .status{bottom:61px;max-width:calc(100% - 100px);font-size:8px;max-height:36px;overflow:hidden}
- .popupCard{max-height:70%;width:min(310px,calc(100% - 20px));font-size:12px}
- #polygonMapGuide{top:7px;left:8px;transform:none;max-width:calc(100% - 111px);font-size:9px}
- body.ui07-focus #app{grid-template-columns:initial}
- body.ui07-focus #side{padding:12px 12px 90px!important;border:0;overflow-y:auto;visibility:visible}
-}
-@media(min-width:761px){
- body.ui07-field #app{grid-template-columns:0 minmax(0,1fr)}
- body.ui07-field #side{padding:0;overflow:hidden;visibility:hidden;border:0}
- body.ui07-field #ui07PanelBtn{display:block!important}
- body.ui07-panel-open.ui07-field #app{grid-template-columns:320px minmax(0,1fr)}
- body.ui07-panel-open.ui07-field #side{padding:12px;overflow:auto;visibility:visible;border-right:1px solid #d0d5dd}
-}
+/* MAP7 FLOAT-ONLY VIEWER: UI layer; original data and analysis functions are retained. */
+:root{--fl-head:59px;--fl-safe:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;overflow:hidden!important}
+header{height:var(--fl-head)!important;min-height:var(--fl-head);padding:6px 12px!important;position:relative;z-index:12}
+header .brandMark{width:35px;height:35px}header .brandTitle h1{font-size:clamp(12px,1.45vw,17px);white-space:normal;line-height:1.15}
+header .brandTitle .tagline{font-size:9px}header .brandTitle .legacy{display:none}
+header .viewerBadge{font-size:9px;white-space:nowrap}
+#app{position:fixed!important;inset:var(--fl-head) 0 0!important;width:100%!important;height:auto!important;display:block!important;overflow:hidden!important}
+#app>#side{position:absolute!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;overflow:hidden!important;visibility:hidden!important;pointer-events:none!important;padding:0!important}
+#app>#map{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important}
+#polygonMapGuide{display:none!important}
+#flEditSvg{position:absolute;inset:0;width:100%;height:100%;z-index:29;overflow:visible;pointer-events:none;touch-action:none}
+#flEditSvg .flPolygon{pointer-events:visibleFill;cursor:grab;touch-action:none}
+#flEditSvg .flVertex{pointer-events:all;cursor:grab;touch-action:none}
+#flPlate{position:absolute;z-index:100;right:15px;bottom:calc(13px + var(--fl-safe));width:min(425px,calc(100% - 20px));font-family:system-ui,-apple-system,'Noto Sans JP',sans-serif;pointer-events:none;display:flex;flex-direction:column;align-items:stretch;gap:0;color:#193d42}
+#flPlate>*{pointer-events:auto}
+#flPlate button{font-family:inherit;margin:0}
+#flCard{display:none;overflow:hidden;max-height:0;opacity:0;transform:translateY(14px);border:1px solid #c7dcda;border-radius:15px 15px 0 0;background:#ffffffed;box-shadow:0 6px 23px #132a392d;backdrop-filter:blur(14px)}
+#flPlate.is-open #flCard{display:block;max-height:min(55dvh,520px);opacity:1;transform:translateY(0);animation:flEnter .38s cubic-bezier(.22,1,.36,1) both}
+@keyframes flEnter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+#flBread{display:flex;gap:4px;align-items:center;padding:6px 8px 5px;background:#e7f1ef;border-bottom:1px solid #d2e0df;overflow-x:auto}
+#flBread button{width:auto!important;padding:4px 7px!important;min-height:25px;border-radius:6px!important;border:1px solid #ccdeda!important;background:#fff!important;font-size:10px!important;font-weight:700}
+#flBody{padding:10px 11px 12px;max-height:calc(min(55dvh,520px) - 43px);overflow-y:auto;overscroll-behavior:contain;font-size:11px}
+#flBody .flTop{display:flex;align-items:center;justify-content:space-between;gap:6px;position:sticky;top:-10px;padding:3px 0 7px;background:#ffffffef;z-index:2}
+#flBody .flTop strong{font-size:13px;color:#21454a}
+#flBody .flTop button{width:auto!important;padding:5px 9px!important;font-size:10px!important;min-height:29px}
+#flBody .flDesc{font-size:10px;line-height:1.5;color:#546b70;margin:5px 0 8px}
+#flBody .flRow{display:flex;gap:6px;margin:7px 0;align-items:stretch;flex-wrap:wrap}
+#flBody .flRow button{flex:1 1 110px;width:auto!important;min-height:37px;padding:6px 8px!important;font-size:11px!important;margin:0!important;border:1px solid #c6d7d6!important;border-radius:9px!important;background:#fff!important;color:#21454a!important}
+#flBody .flRow button.flPrimary{background:#0f766e!important;color:#fff!important;border-color:#0f766e!important}
+#flBody .flRow button.flDanger{background:#fff4f1!important;color:#97412f!important;border-color:#e9b7a8!important}
+#flBody .flRow button:disabled{opacity:.4!important}
+#flBody .flStat{font-size:10px;line-height:1.5;border:1px solid #d5e4e2;background:#f4faf9;padding:8px;border-radius:8px;color:#31595b;margin:8px 0}
+#flBody .layerBox,#flBody .statsSection,#flBody .modeSpecific,#flBody .modeSegment,#flBody .accidentIdSearch,#flBody #kpCommunityHub{margin-top:7px}
+#flBody #kpCommunityHub{padding:7px}
+#flBody .kihaiPart{padding:8px}
+#flBody .kihaiPart>details{display:block!important}
+#flBody .flTitle{font-weight:800;color:#31555c;margin:7px 0 3px}
+#flBody input,#flBody textarea,#flBody select{max-width:100%}
+#flBody .selectionResultGroup{margin:4px 0 6px}
+#flBody .statsSection .card b{font-size:17px}
+#flBody .flCompact{font-size:10px;color:#586e77;line-height:1.5}
+#flDensity{display:flex;gap:8px;align-items:stretch;background:#fffffff0;border:1px solid #c4d9d8;border-radius:13px;padding:7px 11px;margin-bottom:7px;box-shadow:0 3px 14px #122e2b24}
+#flDensity label{min-width:0;flex:1 1 50%;font-size:10px;font-weight:750;margin:0!important;display:block}
+#flDensity input{display:block;width:100%;margin:4px 0 0;accent-color:#0f766e}
+#flPlate.is-open #flDensity{display:none}
+#flDock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) 1px repeat(2,minmax(0,.8fr));gap:3px;padding:7px;background:#fffffff5;border:1px solid #bad9d4;border-radius:15px;box-shadow:0 7px 24px #112c2b34;backdrop-filter:blur(12px)}
+#flDock .flDivider{background:#d2dfdd;width:1px;margin:4px 0}
+#flDock button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;min-height:51px;min-width:0;width:100%;border:1px solid transparent!important;border-radius:9px!important;background:transparent!important;color:#274e50!important;padding:4px 2px!important;font-size:10px!important;font-weight:800!important;white-space:nowrap}
+#flDock button b{font-size:18px;line-height:1.1;font-weight:700}
+#flDock button[aria-pressed=true]{background:#ddf3ec!important;border-color:#9accc5!important;color:#075f54!important}
+#flDock button.flSpecial{background:#f6f4fa!important;border-color:#ebe4f4!important}
+#flDock button.flSpecial[aria-pressed=true]{background:#f1e6ff!important}
+#flToast{position:absolute;bottom:calc(100% + 11px);left:50%;transform:translateX(-50%);background:#173a3ce8;color:#fff;padding:8px 12px;border-radius:10px;font-size:11px;line-height:1.4;box-shadow:0 5px 15px #152c3538;display:none;max-width:92%;text-align:center;pointer-events:none}
+#flToast.show{display:block}
+#flGuide{position:absolute;z-index:99;top:10px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 130px);pointer-events:none;padding:7px 10px;border-radius:9px;color:#443074;background:#fbf8ffe8;border:1px solid #c9b3e9;font-weight:700;font-size:11px;text-align:center;box-shadow:0 4px 12px #0f172a20}
+#flGuide[hidden]{display:none!important}
+#flBody .flInputRow{display:grid;grid-template-columns:1fr;gap:6px}
+#flBody .flInputRow label{font-size:10px;margin:5px 0}
+#flBody .flInputRow input{width:100%;font-size:12px;padding:8px;border-radius:6px;border:1px solid #d0d5dd}
+#flBody .flInputRow button{width:auto;margin:0}
+#flBody .kihaiPart .kpActions{grid-template-columns:1fr 1fr}
+#flBody .kpHubList{max-height:145px}
+#flBody .kpList{max-height:160px;overflow-y:auto}
+#flBody .viewerOnlyNote{font-size:10px}
+#flBody .flShapeState{display:inline-block;background:#efe7ff;color:#633ba2;padding:4px 7px;font-size:10px;border-radius:7px;font-weight:800}
+#flBody .flShapeState.done{background:#e0f2ec;color:#126451}
+#flEditSvg .flVertex .hit{fill:transparent;stroke:none}
+#flEditSvg .flVertex .dot{fill:white;stroke:#7552c2;stroke-width:2.3}
+@media(max-width:760px){:root{--fl-head:49px}header .brandMark{width:31px;height:31px}header .brandTitle h1{font-size:12px}header .brandTitle .tagline{display:none}header .viewerBadge{font-size:8px;padding:3px 5px}header{padding:5px 8px!important}#flPlate{left:50%;right:auto;transform:translateX(-50%);bottom:calc(6px + var(--fl-safe));width:calc(100% - 12px);max-width:450px}#flPlate.is-open #flCard{max-height:min(52dvh,420px)}#flBody{max-height:calc(min(52dvh,420px) - 39px);padding:8px 9px}#flDock{padding:5px;gap:2px}#flDock button{min-height:48px;font-size:10px}#flDock button b{font-size:17px}.mapctrl{right:8px;top:8px}.mapctrl button{width:32px;height:32px;font-size:16px}.mapctrl button.mapExternal{font-size:9px;min-width:65px}#closeAllPopups{font-size:9px;width:65px}#map .status{bottom:calc(71px + var(--fl-safe));max-width:calc(100% - 25px);font-size:8px;opacity:.82}#flGuide{font-size:10px;max-width:calc(100% - 120px)}}
+@media(max-width:390px){#flDock button{font-size:9px;padding:3px 1px!important}#flDock button b{font-size:15px}header .viewerBadge{font-size:7px}#flGuide{max-width:calc(100% - 108px);font-size:9px}}
+@media(prefers-reduced-motion:reduce){#flCard{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -545,17 +572,10 @@ body.ui07-focus #map{min-width:0}
       <div class="legacy">旧「東広島市 交通事故ビューア」／名称変更案・未確定</div>
     </div>
   </div>
-<div id="ui07Switch" role="group" aria-label="操作スタイル">
-  <button id="ui07Pc" type="button" aria-pressed="true" title="従来型の閲覧操作">PC操作</button>
-  <button id="ui07Field" type="button" aria-pressed="false" title="現地で地図を広く使う">現地操作</button>
-  <button id="ui07PanelBtn" type="button" aria-expanded="false" aria-controls="side">☰ メニュー</button>
-</div>
-  <div class="viewerBadge"><i></i> Viewer v0.7.0｜UI試験版</div>
+  <div class="viewerBadge"><i></i> MAP7｜フロートUI試験版 v0.7.1</div>
 </header>
 <div id="app">
-<div id="ui07Overlay" aria-hidden="true"></div>
 <aside id="side">
-<div id="ui07Notice"><b>v0.7.0 UI試験版</b>：PC操作／現地操作を切り替えられます。事故記録・データ監査・保存形式は元のv0.6.34.5を維持しています。スマホでは「メニュー」からすべての機能を利用できます。</div>
 <div class="viewerIntro">
   <b>地域の事故と交通量を見る Viewer｜調査・共有</b><br>
   地図を見て、囲んで、話してみる。メンバーの気づきを星から読めます。調べた範囲は個人保存し、選んだ最大3か所をチームへ共有できます。
@@ -923,16 +943,36 @@ body.ui07-focus #map{min-width:0}
  <svg id="leaderLayer" aria-hidden="true"></svg>
  <div id="badgeLayer" aria-hidden="true"></div>
  <div id="popupLayer"></div>
- <div id="polygonMapGuide" hidden><b>範囲を作図中</b>クリック／タップ＝頂点追加　｜　ドラッグ＝地図移動　｜　ホイール＝拡大縮小　｜　3点以上＝確定</div>
+ 
+  <svg id="flEditSvg" aria-label="選択図形の編集" role="group"></svg>
+  <div id="flGuide" hidden>○頂点を動かして変形 ／ 内側を動かして全体移動</div>
+<div id="polygonMapGuide" hidden><b>範囲を作図中</b>クリック／タップ＝頂点追加　｜　ドラッグ＝地図移動　｜　ホイール＝拡大縮小　｜　3点以上＝確定</div>
  <div class="mapctrl">
    <button id="zoomIn" title="拡大">＋</button>
    <button id="zoomOut" title="縮小">−</button>
    <button id="openGoogleCurrent" class="mapExternal" title="現在の地図中心と縮尺でGoogleマップを別タブで開く">Google地図</button>
    <button id="closeAllPopups" title="開いている情報をすべて閉じる">全閉</button>
  </div>
- <div id="ui07Bottom"><button type="button" id="ui07Explore" class="primary">☰ 調べる・記録する</button><button type="button" id="ui07Range">範囲を囲む</button></div>
  <div class="status" id="status">Viewer｜道路背景: 地理院タイル（淡色地図） / 事故点は警察庁公開データ由来・交通量はR3調査</div>
 </main>
+
+<div id="flPlate" aria-label="道の気配MAP 操作プレート">
+ <section id="flCard" aria-label="操作カード"><nav id="flBread" aria-label="操作階層"></nav><div id="flBody"></div></section>
+ <div id="flDensity" aria-label="地図の表示濃度">
+  <label>▧ 地図 <output id="flMapVal">45%</output><input id="flMapOpacity" type="range" min="0" max="100" step="5" value="45" aria-label="背景地図の濃さ"></label>
+  <label>━ 交通量 <output id="flTrafficVal">45%</output><input id="flTrafficOpacity" type="range" min="0" max="100" step="5" value="45" aria-label="道路交通量の濃さ"></label>
+ </div>
+ <nav id="flDock" aria-label="操作プレート">
+  <button type="button" data-fl-root="see" aria-pressed="false"><b>◉</b>見る</button>
+  <button type="button" data-fl-root="polygon" aria-pressed="false"><b>⬡</b>囲む</button>
+  <button type="button" data-fl-root="ai" aria-pressed="false"><b>✧</b>AI読み</button>
+  <button type="button" data-fl-root="layers" aria-pressed="false"><b>▤</b>重ねる</button>
+  <span class="flDivider" aria-hidden="true"></span>
+  <button type="button" class="flSpecial" data-fl-root="save" aria-pressed="false"><b>Ａ</b>保存</button>
+  <button type="button" class="flSpecial" data-fl-root="share" aria-pressed="false"><b>Ｂ</b>共有</button>
+ </nav>
+ <div id="flToast" aria-live="polite" role="status"></div>
+</div>
 </div>
 
 <script>
@@ -2552,7 +2592,7 @@ function updateLeaderLines(){
 }
 
 function render(){
- resizeCanvas(); drawTiles(); drawPoints(); updateLeaderLines(); updateStats();
+ resizeCanvas(); drawTiles(); drawPoints(); updateLeaderLines(); updateStats(); if(typeof flPaint==="function")flPaint();
 }
 function resizeCanvas(){
  const dpr=window.devicePixelRatio||1,w=mapEl.clientWidth,h=mapEl.clientHeight;
@@ -4552,29 +4592,209 @@ loadSavedAreas();renderSavedAreasUI();updateCurrentAreaUI();
 syncModeSegment();
 syncViewerPolygonUI();
 
-apply();fitData();
-</script>
-<script>
 
-/* v0.7.0 UI shell; existing dataset and map algorithms remain unchanged. */
-(function(){
- const body=document.body, pc=document.getElementById('ui07Pc'), field=document.getElementById('ui07Field');
- const menu=document.getElementById('ui07PanelBtn'), overlay=document.getElementById('ui07Overlay');
- const isMobile=()=>window.matchMedia('(max-width:760px)').matches;
- function rerender(){if(typeof schedule==='function')schedule();else if(typeof render==='function')render()}
- function setPanel(open){body.classList.toggle('ui07-panel-open',open);menu.setAttribute('aria-expanded',String(open));menu.textContent=open?'✕ 閉じる':'☰ メニュー';requestAnimationFrame(rerender)}
- function setMode(m){body.classList.toggle('ui07-field',m==='field');body.classList.toggle('ui07-focus',m==='field');pc.setAttribute('aria-pressed',String(m==='pc'));field.setAttribute('aria-pressed',String(m==='field'));
-  if(isMobile())setPanel(false);else setPanel(m==='pc');requestAnimationFrame(rerender);
+// MAP7 FLOAT-ONLY UI (real lat/lon adapter). No modification of source arrays or JSON schemas.
+const flPlate=document.getElementById('flPlate');
+const flBody=document.getElementById('flBody');
+const flBread=document.getElementById('flBread');
+const flSvg=document.getElementById('flEditSvg');
+const flGuide=document.getElementById('flGuide');
+const flTitle={see:'見る',polygon:'囲む',ai:'AI読み',layers:'重ねる',save:'A 保存',share:'B 共有'};
+let flRoot='',flEdit=false,flConfirmed=false,flLastDeleted=null,flPending=null,flUndo=[],flDrag=null,flPanId=0,flPanTimer=0,flToastTimer=0;
+const flPark=document.createElement('div'); flPark.id='flPark';flPark.hidden=true;document.getElementById('side').appendChild(flPark);
+const flMoved=new Set();
+function flReturn(){for(const n of flMoved)flPark.appendChild(n);flMoved.clear();}
+function flMove(sel,to=flBody){const n=document.querySelector(sel);if(n){to.appendChild(n);flMoved.add(n);}return n;}
+function flBtn(name,act,kind='',disabled=false){return `<button type="button" data-fl-act="${act}" class="${kind}" ${disabled?'disabled':''}>${name}</button>`;}
+function flToast(message){const o=document.getElementById('flToast');o.textContent=message;o.classList.add('show');clearTimeout(flToastTimer);flToastTimer=setTimeout(()=>o.classList.remove('show'),2400)}
+function flMessage(){return '<div class="flTop"><strong>'+flTitle[flRoot]+'</strong><button type="button" data-fl-act="collapse" aria-label="カードだけ収納">カード収納 ▾</button></div>';}
+function flResetPan(){if(flPanId)cancelAnimationFrame(flPanId);if(flPanTimer)cancelAnimationFrame(flPanTimer);flPanId=0;flPanTimer=0;}
+function flMoveMapSmooth(dx,dy,ms=390){
+  if(Math.abs(dx)<1&&Math.abs(dy)<1)return;
+  flResetPan();const initial=mapGeom(),lat=centerLat,lon=centerLon,z=zoom,beg=performance.now();
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function anim(t){if(flDrag||dragging)return;const k=reduced?1:Math.min(1,(t-beg)/ms),e=1-Math.pow(1-k,3);
+    centerLon=xToLon(initial.cx-dx*e,z);centerLat=yToLat(initial.cy-dy*e,z);schedule();flPaint();
+    if(k<1)flPanId=requestAnimationFrame(anim);else flPanId=0;}
+  flPanId=requestAnimationFrame(anim);
+}
+function flVisible(){const r=mapEl.getBoundingClientRect(),plate=flPlate.getBoundingClientRect(),left=17,right=r.width-17;
+ const top=Math.min(r.height-80,Math.max(15,flGuide.hidden?17:52));
+ const bottom=Math.min(r.height-12,Math.max(top+90,plate.top-r.top-17));
+ return {left,right,top,bottom};}
+function flKeepShapeVisible(forceCenter=false){
+ if(!flEdit||!currentArea||currentArea.shape!=='polygon'||flDrag)return;
+ const pts=currentArea.points.map(screenOfLatLon),bound=flVisible();if(bound.bottom-bound.top<95)return;
+ const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+ const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+ let dx=0,dy=0,margin=21;
+ if(forceCenter){dx=(bound.left+bound.right-minX-maxX)/2;dy=(bound.top+bound.bottom-minY-maxY)/2;}
+ else{
+  if(maxX-minX<bound.right-bound.left-2*margin){if(minX<bound.left+margin)dx=bound.left+margin-minX;else if(maxX>bound.right-margin)dx=bound.right-margin-maxX;}
+  if(maxY-minY<bound.bottom-bound.top-2*margin){if(minY<bound.top+margin)dy=bound.top+margin-minY;else if(maxY>bound.bottom-margin)dy=bound.bottom-margin-maxY;}
+  else if(minY<bound.top||maxY>bound.bottom)dy=(bound.top+bound.bottom-minY-maxY)/2;
  }
- pc.addEventListener('click',()=>setMode('pc'));field.addEventListener('click',()=>setMode('field'));
- menu.addEventListener('click',()=>setPanel(!body.classList.contains('ui07-panel-open')));
- overlay.addEventListener('click',()=>setPanel(false));
- document.getElementById('ui07Explore').addEventListener('click',()=>setPanel(true));
- document.getElementById('ui07Range').addEventListener('click',()=>{setPanel(true);let b=document.getElementById('viewerRangeBox');if(b)b.scrollIntoView({block:'start',behavior:'smooth'});});
- window.addEventListener('keydown',e=>{if(e.key==='Escape'&&body.classList.contains('ui07-panel-open'))setPanel(false)});
- window.addEventListener('resize',()=>requestAnimationFrame(rerender));
- setMode(isMobile()?'field':'pc');
-})();
+ flMoveMapSmooth(dx,dy,400);
+}
+function flPaint(){
+ flSvg.replaceChildren();
+ flGuide.hidden=!flEdit;
+ if(!flEdit||!currentArea||currentArea.shape!=='polygon'||!currentArea.points?.length)return;
+ const pts=currentArea.points.map(screenOfLatLon);const ns='http://www.w3.org/2000/svg';
+ const poly=document.createElementNS(ns,'polygon');poly.setAttribute('class','flPolygon');poly.setAttribute('points',pts.map(p=>`${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' '));
+ poly.setAttribute('fill','#a187e1');poly.setAttribute('fill-opacity','.13');poly.setAttribute('stroke','#694bb8');poly.setAttribute('stroke-width','2.8');poly.dataset.flDrag='shape';flSvg.appendChild(poly);
+ pts.forEach((p,i)=>{const g=document.createElementNS(ns,'g');g.setAttribute('class','flVertex');g.dataset.flDrag=String(i);
+ const hit=document.createElementNS(ns,'circle');hit.setAttribute('cx',p.x);hit.setAttribute('cy',p.y);hit.setAttribute('r','24');hit.setAttribute('class','hit');
+ const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',p.x);circle.setAttribute('cy',p.y);circle.setAttribute('r','9');circle.setAttribute('class','dot');circle.setAttribute('pointer-events','none');
+ g.append(hit,circle);flSvg.appendChild(g);});
+}
+function flShapeValid(points){return kpPolygon(points)&&points.length<=6;}
+function flSnapshot(){return currentArea?currentArea.points.map(p=>({...p})):null;}
+function flUpdateShape(points,final=false){
+ if(!currentArea||!points||points.length<3)return;
+ currentArea.points=points;currentArea.bounds=boundsFromPoints(points);
+ schedule();flPaint();
+ if(final){updateCurrentAreaUI();syncViewerPolygonUI();flRender();}
+}
+function flGenerate(n){
+ flResetPan();closeViewerRangePopup();setAreaMode(null);polygonDraft=[];
+ const g=mapGeom();const r=Math.max(35,Math.min(84,g.w*.17,g.h*.13));
+ const x=g.w*.5,y=g.h*.42;
+ let pts=Array.from({length:n},(_,i)=>{const a=-Math.PI/2+Math.PI*2*i/n;return pixelToLatLon(x+r*Math.cos(a),y+r*Math.sin(a));});
+ currentArea={shape:'polygon',points:pts,bounds:boundsFromPoints(pts)};flPending=currentArea;
+ flUndo=[];flEdit=true;flConfirmed=false;flLastDeleted=null;updateCurrentAreaUI();syncViewerPolygonUI();schedule();flPaint();flRender();
+ requestAnimationFrame(()=>flKeepShapeVisible(true));
+}
+function flBegin(){
+ if(currentArea?.shape==='polygon'&&currentArea.points.length>=3){
+   if(currentArea.points.length>6){flEdit=false;flConfirmed=true;flPending=null;flPaint();flRender();return;}
+   flPending=currentArea;flEdit=true;flConfirmed=false;flUndo=[];flPaint();flRender();requestAnimationFrame(()=>flKeepShapeVisible());return;
+ }
+ flGenerate(5);
+}
+function flConfirm(){
+ if(!currentArea||currentArea.shape!=='polygon'||!flShapeValid(currentArea.points)){flToast('図形の座標または面積を確認してください');return;}
+ flEdit=false;flConfirmed=true;flPending=null;flResetPan();flPaint();updateCurrentAreaUI();syncViewerPolygonUI();schedule();flRender();
+ showViewerRangeFirstHintIfNeeded();requestAnimationFrame(()=>showViewerRangePopup());flToast('範囲を確定しました。地理座標は保持されています');
+}
+function flClear(){
+ if(!currentArea?.points){flToast('削除する図形はありません');return;}
+ flLastDeleted=JSON.parse(JSON.stringify(currentArea));flUndo=[];flEdit=false;flConfirmed=false;flPending=null;flResetPan();clearViewerPolygon();flPaint();flRender();
+}
+function flRestore(){if(!flLastDeleted)return;currentArea=flLastDeleted;flLastDeleted=null;flEdit=false;flConfirmed=true;flPending=null;updateCurrentAreaUI();syncViewerPolygonUI();schedule();flRender();}
+function flDragStart(e){
+ const target=e.target.closest?.('[data-fl-drag]');if(!target||!flEdit||!currentArea)return;
+ e.stopPropagation();e.preventDefault();flResetPan();
+ const rect=mapEl.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
+ flDrag={id:e.pointerId,kind:target.dataset.flDrag,x,y,before:flSnapshot(),screens:currentArea.points.map(screenOfLatLon),moved:false};
+ target.setPointerCapture(e.pointerId);
+}
+function flDragMove(e){if(!flDrag||flDrag.id!==e.pointerId)return;e.stopPropagation();e.preventDefault();
+ const rect=mapEl.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-flDrag.x,dy=y-flDrag.y;
+ if(Math.hypot(dx,dy)>1.2)flDrag.moved=true;
+ if(!flDrag.moved)return;
+ let pts=flDrag.before.map(p=>({...p}));
+ if(flDrag.kind==='shape')pts=flDrag.screens.map(p=>pixelToLatLon(p.x+dx,p.y+dy));
+ else {const idx=Number(flDrag.kind);pts[idx]=pixelToLatLon(flDrag.screens[idx].x+dx,flDrag.screens[idx].y+dy);}
+ if(pts.every(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)))flUpdateShape(pts);
+}
+function flDragEnd(e){if(!flDrag||flDrag.id!==e.pointerId)return;e.stopPropagation();e.preventDefault();
+ const changed=flDrag.moved,before=flDrag.before;flDrag=null;
+ if(changed){flUndo.push(before);if(flUndo.length>25)flUndo.shift();flUpdateShape(currentArea.points,true);}else flPaint();
+}
+flSvg.addEventListener('pointerdown',flDragStart);flSvg.addEventListener('pointermove',flDragMove);flSvg.addEventListener('pointerup',flDragEnd);flSvg.addEventListener('pointercancel',flDragEnd);flSvg.addEventListener('click',e=>{if(e.target.closest?.('[data-fl-drag]')){e.stopPropagation();e.preventDefault();}});
+function flRender(){
+ flReturn();const opened=!!flRoot;flPlate.classList.toggle('is-open',opened);
+ document.querySelectorAll('[data-fl-root]').forEach(n=>n.setAttribute('aria-pressed',String(opened&&n.dataset.flRoot===flRoot)));
+ flBread.replaceChildren();flBody.replaceChildren();
+ if(!opened)return;
+ const b=document.createElement('button');b.textContent='操作プレート';b.dataset.flAct='collapse';flBread.appendChild(b);
+ const sep=document.createElement('span');sep.textContent='›';flBread.appendChild(sep);
+ const crumb=document.createElement('button');crumb.textContent=flTitle[flRoot];flBread.appendChild(crumb);
+ flBody.innerHTML=flMessage();
+ const add=(text)=>{const d=document.createElement('div');d.innerHTML=text;flBody.appendChild(d);return d};
+ if(flRoot==='see'){
+  add('<p class="flDesc">事故点と集計を切り替えます。地図中心と縮尺は維持します。</p>');
+  flMove('.modeSegment');flMove('#modePointsPanel');flMove('#modeDonutPanel');flMove('.statsSection');flMove('.accidentIdSearch');flMove('#fit');
+ }
+ if(flRoot==='polygon'){
+  if(!currentArea||currentArea.shape!=='polygon'){
+   add('<p class="flDesc">最初から5角形を地図上に表示します。白い頂点を動かし、内側をドラッグすると図形全体が動きます。</p><div class="flRow">'+flBtn('⬡ 5角形を作る','new5','flPrimary')+flBtn('⬢ 6角形を作る','new6')+'</div>'+(flLastDeleted?'<div class="flRow">'+flBtn('↶ 削除を戻す','restore')+'</div>':''));
+  }else{
+   add('<div class="flShapeState '+(!flEdit?'done':'')+'">'+(flEdit?'✎ 図形を調整中':'✓ 選択範囲を表示中')+'</div>'+ 
+   '<p class="flDesc">白い頂点＝変形／図形内部＝全体移動。地図の空白をドラッグすると地図が動きます。</p>'+ 
+   '<div class="flRow">'+flBtn('5角形','new5')+flBtn('6角形','new6')+flBtn('↶ 1つ戻す','undo','',!flEdit||!flUndo.length)+'</div>'+ 
+   '<div class="flRow">'+(flEdit?flBtn('この範囲で確定','confirm','flPrimary'):currentArea.points.length>6?'<span class="flCompact">7頂点以上の図形はViewerでは再編集できません。形状は保持されます。</span>':flBtn('形を再編集','reedit','flPrimary'))+flBtn('× 図形を消す','clear','flDanger')+'</div>'+
+   '<div class="flStat" id="flShapeStats"></div><div class="flRow">'+flBtn('集計結果を開く','result','',flEdit)+'</div>');
+  }
+ }
+ if(flRoot==='ai'){
+  add('<p class="flDesc">選択範囲の集計からAIに渡す文章を作成します。AIへ自動送信しません。</p>');
+  if(currentArea?.shape==='polygon'&&!flEdit){add('<div class="flRow">'+flBtn('選択した範囲の文章をコピー','copyAI','flPrimary')+'</div>');}
+  else add('<div class="flStat">先に「囲む」で範囲を確定してください。集計ドーナツの詳細からもAI読みを利用できます。</div><div class="flRow">'+flBtn('囲むへ','toPolygon','flPrimary')+'</div>');
+ }
+ if(flRoot==='layers'){
+  add('<p class="flDesc">必要な情報だけ地図に重ねます。切替時も視点は保たれます。</p>');
+  flMove('#kihLayerFold');
+  if(!document.querySelector('#flBody #kihLayerFold')){
+   for(const s of ['.layerBox:has(#adminLayer)','.layerBox:has(#schoolLayer)','#kihTrafficPanel','.solarPocBox'])flMove(s);
+  }
+ }
+ if(flRoot==='save'){
+  const shell=add('<p class="flDesc">調べた範囲と個人メモを端末に保存できます。個人用JSONは手元で保管してください。</p><div class="kihaiPart" id="flSaveShell"></div>');
+  const box=shell.querySelector('#flSaveShell');flMove('#kpPersonalPanel',box);flMove('#kpMessage',box);
+  if(!currentArea?.points||flEdit)add('<div class="flStat">保存する場合は「囲む」で形を確定してください。</div>');
+ }
+ if(flRoot==='share'){
+  const shell=add('<p class="flDesc">チームへ提出する候補は最大3件。個人メモを含むJSONとは分離しています。</p><div class="kihaiPart" id="flShareShell"></div>');
+  const box=shell.querySelector('#flShareShell');flMove('#kpProposalPanel',box);flMove('#kpMessage',box);flMove('#kpCommunityHub',box);
+ }
+ const stat=document.getElementById('flShapeStats');
+ if(stat&&currentArea?.shape==='polygon'){const n=recordsForArea(currentArea).length;stat.textContent=`頂点：${currentArea.points.length}／範囲内の事故：${n.toLocaleString()}件（現在の事故フィルタ）`;}
+}
+function flSetRoot(name){
+ if(flRoot===name){flRoot='';flResetPan();flEdit=false;flPaint();flRender();return;}
+ if(flEdit){flEdit=false;flResetPan();flPaint();}
+ flRoot=name;flRender();if(name==='polygon')flBegin();else requestAnimationFrame(()=>flPaint());
+}
+flPlate.addEventListener('click',e=>{
+ const dock=e.target.closest('[data-fl-root]');if(dock){flSetRoot(dock.dataset.flRoot);return;}
+ const btn=e.target.closest('[data-fl-act]');if(!btn)return;
+ const act=btn.dataset.flAct;
+ if(act==='collapse'){flRoot='';flEdit=false;flResetPan();flPaint();flRender();return;}
+ if(act==='new5'||act==='new6'){flGenerate(act==='new5'?5:6);return;}
+ if(act==='undo'){if(flUndo.length&&flEdit){const pts=flUndo.pop();flUpdateShape(pts,true)}return;}
+ if(act==='confirm'){flConfirm();return;}
+ if(act==='reedit'){flBegin();return;}
+ if(act==='clear'){flClear();return;}
+ if(act==='restore'){flRestore();return;}
+ if(act==='result'){showViewerRangePopup();return;}
+ if(act==='copyAI'){if(currentArea?.shape==='polygon'&&!flEdit)copyAreaAi(buildViewerPolygonAiPrompt(currentArea));return;}
+ if(act==='toPolygon'){flSetRoot('polygon');return;}
+});
+// The original, event-connected controls are the only sources of truth.
+const flMapOpacity=document.getElementById('flMapOpacity'),flTrafficOpacity=document.getElementById('flTrafficOpacity');
+function flSyncDensity(){flMapOpacity.value=opacitySel.value;document.getElementById('flMapVal').textContent=opacitySel.value+'%';flTrafficOpacity.value=kihTrafficAlpha.value;document.getElementById('flTrafficVal').textContent=kihTrafficAlpha.value+'%';flTrafficOpacity.disabled=!kihTrafficCheck.checked;}
+flMapOpacity.addEventListener('input',()=>{opacitySel.value=flMapOpacity.value;opacitySel.dispatchEvent(new Event('input'));flSyncDensity();});
+flTrafficOpacity.addEventListener('input',()=>{kihTrafficAlpha.value=flTrafficOpacity.value;kihTrafficAlpha.dispatchEvent(new Event('input'));flSyncDensity();});
+opacitySel.addEventListener('input',flSyncDensity);kihTrafficAlpha.addEventListener('input',flSyncDensity);kihTrafficCheck.addEventListener('change',flSyncDensity);
+flSyncDensity();
+// Block implicit saving of a polygon that the participant has not confirmed.
+kp('kpSaveDraft').addEventListener('click',e=>{if(flPending&&flPending===currentArea){e.stopImmediatePropagation();e.preventDefault();kpMsg('図形の編集がまだ確定していません。「囲む」から範囲を確定してください。',true);flToast('先に「囲む」で範囲を確定してください');}},true);
+// Draw and move geographical controls after normal map paints, avoiding SVG-only fake coordinates.
+const flScheduleBase=schedule;
+// refresh overlay via a separate animation frame for all viewport gestures (pan/zoom/resize).
+mapEl.addEventListener('pointermove',()=>requestAnimationFrame(flPaint));
+mapEl.addEventListener('wheel',()=>requestAnimationFrame(()=>requestAnimationFrame(flPaint)));
+window.addEventListener('resize',()=>{flResetPan();requestAnimationFrame(flPaint)});
+// The source render loop repaints the edit overlay; no polling timer is required.
+window.__MAP7_QA={dataCount:DATA.length,rawCount:RAW_DATA.length,held:[...QUALITY_HOLD_IDS],census:KIH_TRAFFIC_CENSUS.length,
+ state:()=>({open:flRoot,editing:flEdit,confirmed:flConfirmed,vertices:currentArea?.points?.map(p=>({...p}))||[],centerLat,centerLon,zoom}),
+ create:n=>flGenerate(n),confirm:flConfirm,clear:flClear,restore:flRestore,open:flSetRoot,close:()=>{flRoot='';flEdit=false;flRender()},
+ visible:()=>({map:[mapEl.clientWidth,mapEl.clientHeight],plate:flPlate.getBoundingClientRect().toJSON(),app:[document.getElementById('app').clientWidth,document.getElementById('app').clientHeight]})};
+flRender();
+
+apply();fitData();
 </script>
 </body>
 </html>
