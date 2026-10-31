@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="道の気配MAP｜東広島市（仮称）— 公開情報を用いた交通事故と道路交通量を見て、地域を調べる Viewer">
-<title>道の気配MAP｜東広島市 Viewer MAP7 保存・共有省入力 v0.7.6-L</title>
+<title>道の気配MAP｜東広島市 Viewer MAP7 Slack貼付取込 v0.7.7-L</title>
 <style>
 :root{--bg:#f5f7fa;--panel:#fff;--text:#1f2937;--muted:#667085;--line:#d0d5dd;--blue:#175cd3}
 *{box-sizing:border-box}
@@ -583,6 +583,17 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
  #flBody .kpList,#flBody .kpHubList{max-height:none;overflow:visible}
  #flToast{bottom:71px;top:auto}
 }
+
+/* MAP7 v0.7.7: Paste a Slack JSON snippet without saving/re-naming a file. */
+#kpCommunityHub .kpPasteImportPanel{margin:8px 0 4px;padding:0;border:1px solid #a8c8c5;border-radius:8px;background:#fff;overflow:hidden}
+#kpCommunityHub .kpPasteImportPanel>summary{cursor:pointer;padding:9px;font-size:10.5px;font-weight:800;color:#0c665f;list-style:revert}
+#kpCommunityHub .kpPasteImportBody{padding:1px 9px 10px}
+#kpCommunityHub .kpPasteImportBody p{margin:3px 0 7px;font-size:10px;line-height:1.5}
+#kpCommunityHub .kpPasteImportBody label{display:block;margin:5px 0 4px;font-size:10px;font-weight:700}
+#kpPasteSharedText{display:block;width:100%;height:112px;min-height:88px;max-height:220px;resize:vertical;box-sizing:border-box;border:1px solid #a3bfb9;border-radius:6px;padding:8px;font:11px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;background:#fff;color:#1d2939;overflow:auto;overflow-wrap:anywhere}
+#kpCommunityHub .kpPasteActionRow{display:grid;grid-template-columns:1.6fr .65fr;gap:6px;margin-top:7px}
+#kpCommunityHub .kpPasteActionRow button{margin:0!important;font-size:10px!important;padding:8px 5px!important;width:100%;border-radius:6px}
+#kpPasteStatus{font-size:10px;line-height:1.5;margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -595,7 +606,7 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
       <div class="legacy">旧「東広島市 交通事故ビューア」／名称変更案・未確定</div>
     </div>
   </div>
-  <div class="viewerBadge"><i></i> MAP7｜図形比較試験版 v0.7.6</div>
+  <div class="viewerBadge"><i></i> MAP7｜図形比較＋貼付取込 v0.7.7</div>
 </header>
 <div id="app">
 <aside id="side">
@@ -609,8 +620,18 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
   <div class="kpHubTitle"><span class="kpHubStar" aria-hidden="true">☆</span><b>みんなの気になる場所</b><span id="kpCommunityCount" class="kpTag">操作例 2件</span></div>
   <p>白抜きの星は事故点から離して表示する目印です。細い線が元の場所を示します。事故点や交通量の線は直接クリックできます。最初の2件は正式な提案ではない操作例です。</p>
   <div class="kpHubList" id="kpCommunityList"></div>
-  <div class="kpActions"><button id="kpImportShared" type="button" class="primary">チームの提出JSONを読み込む</button><button id="kpClearShared" type="button">読込分を消す</button></div>
-  <input id="kpSharedFiles" type="file" accept=".json,application/json" multiple hidden>
+  <div class="kpActions"><button id="kpImportShared" type="button" class="primary">JSONファイルを選んで読み込む</button><button id="kpClearShared" type="button">読込分を消す</button></div>
+  <details id="kpPasteImportPanel" class="kpPasteImportPanel">
+    <summary>Slackの文字列を貼り付けて読み込む</summary>
+    <div class="kpPasteImportBody">
+      <p>SlackのJSONスニペットを最初の { から最後の } までコピーし、ここへ貼り付けます。チーム提出用だけを取り込み、外部送信はしません。</p>
+      <label for="kpPasteSharedText">JSONの内容を貼り付け</label>
+      <textarea id="kpPasteSharedText" rows="7" maxlength="200000" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="{ ... }"></textarea>
+      <div class="kpPasteActionRow"><button id="kpPasteSharedApply" type="button" class="primary">確認して地図に取り込む</button><button id="kpPasteSharedClear" type="button">入力を消す</button></div>
+      <div id="kpPasteStatus" role="status" aria-live="polite"></div>
+    </div>
+  </details>
+  <input id="kpSharedFiles" type="file" accept=".json,application/json,.txt,text/plain" multiple hidden>
   <label class="kpHubToggle"><input id="kpCommunityVisible" type="checkbox" checked> 星と提案範囲を地図に表示</label>
   <p class="kpHubMessage" id="kpHubMessage" role="status">例題の星を選んで、ポップアップを確認できます。</p>
   <p class="kpHubCaution">JSONはこの画面内だけで読み込みます。Slackからの自動取得や送信はありません。読み込んだ共有データは自分の個人保存を変更しません。</p>
@@ -4621,6 +4642,46 @@ function kpCommunityValidShare(o){
  const seen=new Set();
  for(const p of o.proposals){if(!kpValidProposal(p)||p.reason.length>1500||p.onSiteQuestions?.length>1500||p.communityVoice?.length>1000)throw Error('候補の必須項目・座標・文章長を確認してください');if(seen.has(p.proposalId))throw Error('同じファイルに重複候補IDがあります');seen.add(p.proposalId);}
 }
+// Shared-data intake is common to a selected file and pasted Slack snippet.
+// Validate the entire bundle before changing any map state; never execute pasted text.
+function kpCommunityAddValidatedBundle(obj){
+ kpCommunityValidShare(obj);
+ const staged=[],existing=new Set(kpCommunityState.imported.map(kpCommunityKey));
+ const mine=new Set(kpState.proposals.map(p=>kpState.participantId+'|'+p.proposalId));
+ let dup=0;
+ for(const p of obj.proposals){
+  const item={...kpCopy(p),author:{participantId:String(obj.author.participantId).slice(0,150),displayName:String(obj.author.displayName).slice(0,50)},bundleId:String(obj.bundleId||''),dataRef:kpCopy(obj.dataRef||{})};
+  const key=kpCommunityKey(item);
+  if(existing.has(key)||mine.has(item.author.participantId+'|'+item.proposalId)){dup++;continue;}
+  if(kpCommunityState.imported.length+staged.length>=300)throw Error('共有候補は最大300件までです');
+  existing.add(key);staged.push(item);
+ }
+ kpCommunityState.imported.push(...staged);
+ return {count:staged.length,dup};
+}
+function kpCommunityParsePastedJson(value){
+ let raw=String(value||'').trim();
+ if(!raw)throw Error('貼り付け欄が空です。Slackのスニペット全文をコピーしてください');
+ if(raw.length>200000)throw Error('文字列が長すぎます（上限20万文字）');
+ // Also tolerate Slack text copied together with a Markdown code fence.
+ if(/^```(?:json)?[\t ]*\r?\n/i.test(raw))raw=raw.replace(/^```(?:json)?[\t ]*\r?\n/i,'').replace(/\r?\n```[\t ]*$/,'').trim();
+ if(!raw.startsWith('{')||!raw.endsWith('}'))throw Error('先頭が { 、末尾が } のJSON全文を貼り付けてください');
+ let obj;
+ try{obj=JSON.parse(raw)}catch(_){throw Error('JSONの構文を読み取れませんでした。途中の行が抜けていないか確認してください');}
+ return obj;
+}
+kp('kpPasteSharedApply').addEventListener('click',()=>{
+ const status=kp('kpPasteStatus');
+ try{
+  const obj=kpCommunityParsePastedJson(kp('kpPasteSharedText').value);
+  const {count,dup}=kpCommunityAddValidatedBundle(obj);
+  kpCommunityRender();schedule();
+  status.style.color='#0a685a';status.textContent=`取込完了：新規 ${count}件、重複 ${dup}件。地図の星と一覧で確認してください。`;
+  kpCommunityMsg(`Slackの文字列から共有候補 ${count}件を読み込みました。重複 ${dup}件。個人保存は変更していません。`);
+  kp('kpPasteSharedText').value='';
+ }catch(e){status.style.color='#b42318';status.textContent='取込できません：'+e.message;kpCommunityMsg('貼り付けた内容を確認してください。元の共有データは変更していません。',true);}
+});
+kp('kpPasteSharedClear').addEventListener('click',()=>{kp('kpPasteSharedText').value='';kp('kpPasteStatus').textContent='';});
 kp('kpImportShared').addEventListener('click',()=>kp('kpSharedFiles').click());
 kp('kpClearShared').addEventListener('click',()=>{kpCommunityState.imported=[];popupLayer.querySelectorAll('.popupCard[data-kp-proposal]').forEach(n=>n.remove());kpCommunityRender();schedule();kpCommunityMsg('読込済み共有データを画面から消しました。個人保存は変更していません。')});
 kp('kpCommunityVisible').addEventListener('change',()=>{kpCommunityState.visible=kp('kpCommunityVisible').checked;schedule()});
@@ -4630,12 +4691,8 @@ kp('kpSharedFiles').addEventListener('change',async()=>{
  for(const fi of files){
   try{
    if(fi.size>2_000_000)throw Error('ファイルサイズが上限超過');
-   const obj=JSON.parse(await fi.text());kpCommunityValidShare(obj);
-   for(const p of obj.proposals){const item={...kpCopy(p),author:{participantId:String(obj.author.participantId).slice(0,150),displayName:String(obj.author.displayName).slice(0,50)},bundleId:String(obj.bundleId||''),dataRef:kpCopy(obj.dataRef||{})};
-    if(kpCommunityState.imported.some(x=>kpCommunityKey(x)===kpCommunityKey(item))||kpState.proposals.some(x=>x.proposalId===item.proposalId && kpState.participantId===item.author.participantId)){dup++;continue;}
-    if(kpCommunityState.imported.length>=300)throw Error('共有候補は最大300件までです');
-    kpCommunityState.imported.push(item);count++;
-   }
+   const obj=JSON.parse(await fi.text());
+   const res=kpCommunityAddValidatedBundle(obj);count+=res.count;dup+=res.dup;
   }catch(e){errors.push(fi.name+'：'+e.message)}
  }
  kp('kpSharedFiles').value='';kpCommunityRender();schedule();
