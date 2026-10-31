@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="道の気配MAP｜東広島市（仮称）— 公開情報を用いた交通事故と道路交通量を見て、地域を調べる Viewer">
-<title>道の気配MAP｜東広島市 Viewer MAP7 PC左配置比較版 v0.7.1-L</title>
+<title>道の気配MAP｜東広島市 Viewer MAP7 保存・共有省入力 v0.7.5-L</title>
 <style>
 :root{--bg:#f5f7fa;--panel:#fff;--text:#1f2937;--muted:#667085;--line:#d0d5dd;--blue:#175cd3}
 *{box-sizing:border-box}
@@ -487,6 +487,12 @@ header{height:72px;padding:8px 14px;background:#111827}
 .kpPopupBody .kpPill{display:inline-block;border:1px solid #a5c7c3;border-radius:20px;padding:2px 7px;font-size:9px;background:#f0fdfa;color:#12564f}
 .kpPopupBody button{font-size:10px;padding:7px 6px;margin-top:7px;cursor:pointer}
 
+/* MAP7 v0.7.4: editing existing personal and submission-candidate records. */
+.kpEditStatus{margin:7px 0;padding:8px 9px;border:1px solid #8bbcb0;background:#e9f8f3;border-radius:8px;color:#165b50;font-size:10.5px;line-height:1.5;font-weight:700}
+.kpEditStatus[hidden],.kpEditActions[hidden]{display:none!important}
+.kpEditActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 8px}
+.kpEditActions button{margin:0!important;min-height:38px;font-size:10.5px!important;background:#f7fbfa!important;border:1px solid #aecac6!important;color:#165b50!important}
+.kpItemBtns button{min-height:34px}
 /* MAP7 FLOAT-ONLY VIEWER: UI layer; original data and analysis functions are retained. */
 :root{--fl-head:59px;--fl-safe:env(safe-area-inset-bottom,0px)}
 html,body{height:100%;overflow:hidden!important}
@@ -560,6 +566,16 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
 @media(max-width:390px){#flDock button{font-size:9px;padding:3px 1px!important}#flDock button b{font-size:15px}header .viewerBadge{font-size:7px}#flGuide{max-width:calc(100% - 108px);font-size:9px}}
 @media(prefers-reduced-motion:reduce){#flCard{animation:none!important}}
 
+.kpTransferHint{font-size:10px;line-height:1.55;color:#0f5f68;background:#f0faf8;border:1px solid #b7d9d5;border-radius:6px;padding:7px 8px;margin:5px 0 10px}
+/* MAP7 v0.7.5: tall desktop floating panel. Mobile layout remains unchanged. */
+@media (min-width:761px){
+ #flPlate{top:10px;bottom:13px;height:auto;justify-content:flex-end}
+ #flPlate.is-open #flCard{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;max-height:none;overflow:hidden}
+ #flPlate.is-open #flBread{flex:0 0 auto}
+ #flPlate.is-open #flBody{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;scrollbar-gutter:stable}
+ #flBody .kpList,#flBody .kpHubList{max-height:none;overflow:visible}
+ #flToast{bottom:71px;top:auto}
+}
 </style>
 </head>
 <body>
@@ -572,7 +588,7 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
       <div class="legacy">旧「東広島市 交通事故ビューア」／名称変更案・未確定</div>
     </div>
   </div>
-  <div class="viewerBadge"><i></i> MAP7｜フロートUI試験版 v0.7.1</div>
+  <div class="viewerBadge"><i></i> MAP7｜フロートUI試験版 v0.7.5</div>
 </header>
 <div id="app">
 <aside id="side">
@@ -647,23 +663,29 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
   <p>囲んで調べた範囲は自分だけの保存場所へ。そこから気になった場所を最大3件選び、チームに提出できます。</p>
   <details id="kpPersonalPanel" open>
     <summary>調べた範囲を自分用に保管する <span id="kpDraftCount" class="kpCount">0件</span></summary>
-    <label for="kpDraftName">いま囲んでいる範囲の名前（自由につけられます）</label>
-    <input id="kpDraftName" type="text" maxlength="70" placeholder="例：西条駅北側を見てみる">
-    <label for="kpDraftNote">自分だけのメモ</label>
-    <textarea id="kpDraftNote" maxlength="1200" placeholder="試してみたこと、気づき、迷っていること"></textarea>
+    <div id="kpDraftEditStatus" class="kpEditStatus" role="status" hidden></div>
+    <label for="kpDraftName">範囲の名前</label>
+    <input id="kpDraftName" type="text" autocomplete="off" maxlength="70" placeholder="例：西条駅北側を見てみる">
+    <label for="kpDraftNote">自分だけのメモ（共有時に再利用可能）</label>
+    <textarea id="kpDraftNote" autocomplete="off" maxlength="1200" placeholder="試してみたこと、気づき、迷っていること"></textarea>
     <button type="button" id="kpSaveDraft" class="primary">いまの多角形を自分用に保存</button>
+    <div class="kpEditActions" id="kpDraftEditActions" hidden>
+      <button type="button" id="kpDraftEditShape">地図上で図形を調整</button>
+      <button type="button" id="kpDraftCancelEdit">編集を取り消す</button>
+    </div>
     <div class="kpList" id="kpDraftList"></div>
     <div class="kpActions">
       <button type="button" id="kpExportPrivate">個人用JSON保存</button>
       <button type="button" id="kpImportPrivate">個人用JSON読込</button>
     </div>
     <input type="file" id="kpPrivateFile" accept=".json,application/json" hidden>
-    <p class="kpWarn">個人用JSONには調査中のメモも入ります。Slackに提出するファイルには使わず、手元のバックアップとして保存してください。端末のブラウザ保存だけに依存しない運用です。</p>
+    <p class="kpWarn">個人用JSONには調査中のメモも入ります。Slackに提出せず、手元のバックアップとして保管してください。<b>旧版から移行するときは、旧版で「個人用JSON保存」→新版で「個人用JSON読込」を行ってください。</b> HTMLファイルを替えるとブラウザ内の保存記録が引き継がれない場合があります。</p>
   </details>
   <details id="kpProposalPanel" open>
     <summary>私の気になる場所を提出する <span id="kpProposalCount" class="kpCount">0/3件</span></summary>
     <label for="kpAuthor">表示名（チーム内で分かる名前）</label>
     <input id="kpAuthor" type="text" maxlength="50" placeholder="例：ナカガワ">
+    <div id="kpProposalEditStatus" class="kpEditStatus" role="status" hidden></div>
     <label for="kpSourceDraft">自分用に保存した範囲から選択</label>
     <select id="kpSourceDraft"><option value="">候補にする範囲を選んでください</option></select>
     <label for="kpPlaceName">場所の呼び名（交差点名・地名など）</label>
@@ -672,17 +694,22 @@ header .viewerBadge{font-size:9px;white-space:nowrap}
     <select id="kpPlaceType"><option value="intersection_area">交差点周辺</option><option value="road_segment">道路区間</option><option value="neighborhood">地域・町域</option><option value="other">その他</option></select>
     <label for="kpSourceType">気づきのきっかけ</label>
     <select id="kpSourceType"><option value="map">地図・事故記録を見て</option><option value="experience">自分の通行経験から</option><option value="community">地域の方から聞いて</option><option value="field">現地観察から</option><option value="other">その他</option></select>
-    <label for="kpReason">気になった理由</label>
-    <textarea id="kpReason" maxlength="1300" placeholder="例：事故の形が似ているように見えた。実際の理由はまだ分からない"></textarea>
+    <label for="kpReason">気になった理由（個人メモを転記・編集できます）</label>
+    <textarea id="kpReason" maxlength="1300" placeholder="自分用に保存した範囲を選ぶと、メモがここに転記されます"></textarea>
+    <p id="kpTransferStatus" class="kpTransferHint" role="status">保存した範囲を選ぶと名称とメモを転記します。内容を確認してから提出候補へ追加してください。</p>
     <label for="kpCommunityVoice">地域の方から聞いたこと（任意）</label>
     <textarea id="kpCommunityVoice" maxlength="900" placeholder="共有の了解を得た内容を、匿名で簡潔に記録。聞いたことと自分の解釈を分けてください"></textarea>
     <label class="kpVoiceConsent"><input type="checkbox" id="kpVoiceConsent"> この内容をチームに共有する了解を得ており、個人を特定する情報を含みません</label>
     <label for="kpQuestion">現地で確かめたいこと</label>
     <textarea id="kpQuestion" maxlength="1300" placeholder="例：左右の見通し、通学時間帯の交通の流れ"></textarea>
-    <button id="kpAddProposal" type="button" class="primary">この場所を提出候補に入れる</button>
+    <button id="kpAddProposal" type="button" class="primary">確認して提出候補に追加</button>
+    <div class="kpEditActions" id="kpProposalEditActions" hidden>
+      <button type="button" id="kpProposalEditShape">地図上で図形を調整</button>
+      <button type="button" id="kpProposalCancelEdit">編集を取り消す</button>
+    </div>
     <div id="kpProposalList" class="kpList"></div>
     <button id="kpExportShared" type="button" class="primary">Slack提出用JSONを書き出す（候補だけ）</button>
-    <p class="kpWarn">提出JSONに、未提出の「調べた範囲」や個人メモは含めません。ファイルをSlackのチーム内プライベートチャンネルへ添付してください。これは投票ではなく、西米さんの選定を助ける提案です。</p>
+    <p class="kpWarn">選択した個人メモを「気になった理由」に転記できます。提出候補に追加した文章は共有対象になるので内容・個人情報を確認してください。個人メモ原本や未提出の範囲は提出JSONには含めません。ファイルはSlackのチーム内プライベートチャンネルへ添付してください。</p>
   </details>
   <div class="kpMsg" id="kpMessage" role="status"></div>
 </section>
@@ -4152,6 +4179,8 @@ const kpCopy=o=>JSON.parse(JSON.stringify(o));
 const kpNow=()=>new Date().toISOString();
 const kpId=(prefix='kp')=>prefix+'-'+(typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function'?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
 const kpState={participantId:kpId('person'),author:'',drafts:[],proposals:[]};
+let kpEditingDraftId='',kpEditingProposalId=''; // IDs only: changes stay in the form and map until explicit save.
+
 function kpMsg(message,isError=false){kp('kpMessage').textContent=message;kp('kpMessage').style.color=isError?'#b42318':'#0f5f68';}
 function kpPolygon(points){
  return Array.isArray(points)&&points.length>=3&&points.length<=200&&points.every(p=>p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&p.lat>=33.0&&p.lat<=36.0&&p.lon>=131.0&&p.lon<=134.0)&&polygonAreaKm2(points)>1e-10;
@@ -4189,17 +4218,91 @@ function kpRender(){
  for(const d of kpState.drafts){const item=document.createElement('div');item.className='kpItem';
  const t=document.createElement('b');t.textContent=d.name;const small=document.createElement('div');small.className='kpSmall';small.textContent=`${d.points.length}頂点｜記録時：${d.snapshot?.accidents??'?'}件｜個人メモ：${d.note||'なし'}`;
  const actions=document.createElement('div');actions.className='kpItemBtns';const load=document.createElement('button');load.type='button';load.textContent='地図で開く';load.addEventListener('click',()=>kpRestore(d));
- const del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>{if(!confirm('この調査メモを削除しますか？（提出済み候補は保持します）'))return;kpState.drafts=kpState.drafts.filter(x=>x.id!==d.id);kpStore();kpRender()});actions.append(load,del);item.append(t,small,actions);drafts.append(item)}
+ const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.addEventListener('click',()=>kpStartDraftEdit(d.id));
+ const del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>{if(!confirm('この調査メモを削除しますか？（提出済み候補は保持します）'))return;kpState.drafts=kpState.drafts.filter(x=>x.id!==d.id);if(kpEditingDraftId===d.id)kpCancelDraftEdit(true);kpStore();kpRender()});actions.append(load,edit,del);item.append(t,small,actions);drafts.append(item)}
  const sel=kp('kpSourceDraft'),old=sel.value;sel.replaceChildren();const head=document.createElement('option');head.value='';head.textContent='調べた範囲を選択';sel.append(head);
  for(const d of kpState.drafts){const o=document.createElement('option');o.value=d.id;o.textContent=d.name;sel.append(o)}if(kpState.drafts.some(d=>d.id===old))sel.value=old;
  const props=kp('kpProposalList');props.replaceChildren();
  for(const p of kpState.proposals){const item=document.createElement('div');item.className='kpItem';const title=document.createElement('b');title.textContent=p.placeName;
  const info=document.createElement('div');info.className='kpSmall';info.textContent=`理由：${p.reason.slice(0,130)}${p.reason.length>130?'…':''}｜範囲内：${p.snapshot.accidents}件`;
- const del=document.createElement('button');del.type='button';del.textContent='提出候補から外す';del.addEventListener('click',()=>{kpState.proposals=kpState.proposals.filter(x=>x.proposalId!==p.proposalId);kpStore();kpRender()});item.append(title,info,del);props.append(item)}
- kp('kpAddProposal').disabled=kpState.proposals.length>=KP_MAX;
+ const buttons=document.createElement('div');buttons.className='kpItemBtns';
+ const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.addEventListener('click',()=>kpStartProposalEdit(p.proposalId));
+ const del=document.createElement('button');del.type='button';del.textContent='提出候補から外す';del.addEventListener('click',()=>{if(!confirm('この提出候補を外しますか？ 個人用の保存範囲は保持します。'))return;kpState.proposals=kpState.proposals.filter(x=>x.proposalId!==p.proposalId);if(kpEditingProposalId===p.proposalId)kpCancelProposalEdit(true);kpStore();kpRender();kpCommunityRender();schedule()});buttons.append(edit,del);item.append(title,info,buttons);props.append(item)}
+ kp('kpDraftEditStatus').hidden=!kpEditingDraftId;
+ kp('kpDraftEditActions').hidden=!kpEditingDraftId;
+ kp('kpSaveDraft').textContent=kpEditingDraftId?'この記録の変更を保存':'いまの多角形を自分用に保存';
+ if(kpEditingDraftId){const d=kpState.drafts.find(x=>x.id===kpEditingDraftId);kp('kpDraftEditStatus').textContent=d?'編集中：'+d.name+'｜変更は「変更を保存」を押すまで記録に反映されません。':'元の記録が見つかりません';}
+ kp('kpProposalEditStatus').hidden=!kpEditingProposalId;
+ kp('kpProposalEditActions').hidden=!kpEditingProposalId;
+ kp('kpSourceDraft').disabled=!!kpEditingProposalId;
+ kp('kpAddProposal').textContent=kpEditingProposalId?'この提出候補の変更を保存':'確認して提出候補に追加';
+ if(kpEditingProposalId){const p=kpState.proposals.find(x=>x.proposalId===kpEditingProposalId);kp('kpProposalEditStatus').textContent=p?'編集中：'+p.placeName+'｜共有済みの古いJSONは自動更新されません。編集後、再びJSONを書き出してください。':'元の提出候補が見つかりません';}
+ kp('kpAddProposal').disabled=!kpEditingProposalId&&kpState.proposals.length>=KP_MAX;
  kp('kpExportShared').disabled=kpState.proposals.length===0;
 }
+// MAP7 edit workflow: personal master and B candidate remain independent entities.
+function kpCancelDraftEdit(silent=false){
+ const original=kpState.drafts.find(x=>x.id===kpEditingDraftId);
+ kpEditingDraftId='';kp('kpDraftName').value='';kp('kpDraftNote').value='';
+ if(original)kpLoadEditableArea(original.points);else if(flEdit){flEdit=false;flPending=null;flUndo=[];flPaint();}
+ kpRender();if(!silent)kpMsg('個人記録の編集を取り消しました。保存済みデータは変更していません。');
+}
+function kpCancelProposalEdit(silent=false){
+ const original=kpState.proposals.find(x=>x.proposalId===kpEditingProposalId);
+ const points=original?kpFromGeo(original.polygon):null;
+ kpEditingProposalId='';kp('kpSourceDraft').disabled=false;kpShareSelection='';kpFillShareFromDraft(null);
+ kp('kpSourceDraft').value='';
+ if(points)kpLoadEditableArea(points);else if(flEdit){flEdit=false;flPending=null;flUndo=[];flPaint();}
+ kpRender();if(!silent)kpMsg('提出候補の編集を取り消しました。保存済みデータは変更していません。');
+}
+function kpSwitchEdit(what){
+ if((kpEditingDraftId||kpEditingProposalId)&&!confirm('現在の未保存の編集内容は破棄されます。別の記録を編集しますか？'))return false;
+ if(kpEditingDraftId)kpCancelDraftEdit(true);
+ if(kpEditingProposalId)kpCancelProposalEdit(true);
+ return true;
+}
+function kpLoadEditableArea(points){
+ if(!kpPolygon(points))return false;
+ flResetPan();flEdit=false;flPending=null;flConfirmed=true;flUndo=[];flLastDeleted=null;
+ currentArea={shape:'polygon',points:kpCopy(points),bounds:boundsFromPoints(points)};
+ closeAllPopups();apply();updateCurrentAreaUI();syncViewerPolygonUI();schedule();flPaint();
+ return true;
+}
+function kpStartDraftEdit(id){
+ const d=kpState.drafts.find(x=>x.id===id);
+ if(!d||!kpSwitchEdit('draft')||!kpLoadEditableArea(d.points))return;
+ kpEditingDraftId=id;kp('kpDraftName').value=d.name;kp('kpDraftNote').value=d.note||'';
+ // After selecting Edit, immediately show the polygon editor while retaining A form input values.
+ flRoot='save';flRender();kpRender();kp('kpPersonalPanel').open=true;
+ if(d.points.length<=6){flSetRoot('polygon');kpMsg('図形を調整し「この範囲で確定」を押すとA保存へ戻ります。名前・コメントも編集できます。');}
+ else kpMsg('7頂点以上の既存図形は位置と形状を保持し、Viewerではコメントのみ編集できます。');
+}
+function kpStartProposalEdit(id){
+ const p=kpState.proposals.find(x=>x.proposalId===id);
+ const points=p?kpFromGeo(p.polygon):null;
+ if(!p||!points||!kpSwitchEdit('proposal')||!kpLoadEditableArea(points))return;
+ kpEditingProposalId=id;kpShareSelection=p.sourceDraftId||'';
+ kp('kpSourceDraft').value=p.sourceDraftId||'';
+ kp('kpPlaceName').value=p.placeName||'';
+ kp('kpReason').value=p.reason||'';
+ kp('kpQuestion').value=p.onSiteQuestions||'';
+ kp('kpCommunityVoice').value=p.communityVoice||'';
+ kp('kpVoiceConsent').checked=!!p.communityVoice;
+ kp('kpPlaceType').value=p.placeType||'other';kp('kpSourceType').value=p.sourceType||'other';
+ kp('kpTransferStatus').textContent='この候補は独立して修正できます。元のA保存と既に送信済みのJSONは書き換えません。';
+ // B submission candidates have independent geometry; switch to polygon without touching A data.
+ flRoot='share';flRender();kpRender();kp('kpProposalPanel').open=true;
+ if(points.length<=6){flSetRoot('polygon');kpMsg('図形を調整し「この範囲で確定」を押すとB共有へ戻ります。提出内容を確認し、変更を保存してください。');}
+ else kpMsg('7頂点以上の既存図形は形状を保持します。B共有ではコメントのみ編集できます。');
+}
+kp('kpDraftCancelEdit').addEventListener('click',()=>kpCancelDraftEdit());
+kp('kpProposalCancelEdit').addEventListener('click',()=>kpCancelProposalEdit());
+kp('kpDraftEditShape').addEventListener('click',()=>{if(kpEditingDraftId&&flRoot!=='polygon')flSetRoot('polygon');});
+kp('kpProposalEditShape').addEventListener('click',()=>{if(kpEditingProposalId&&flRoot!=='polygon')flSetRoot('polygon');});
 function kpRestore(d){
+ if((kpEditingDraftId||kpEditingProposalId)&&!confirm('編集中の未保存内容を破棄して別の範囲を開きますか？'))return;
+ if(kpEditingDraftId)kpCancelDraftEdit(true);if(kpEditingProposalId)kpCancelProposalEdit(true);
+ flEdit=false;flPending=null;flConfirmed=true;flUndo=[];flPaint();
  currentArea={shape:'polygon',points:kpCopy(d.points),bounds:boundsFromPoints(d.points)};
   // Viewerは全年度表示に固定。旧年度指定はJSON内に保持し、閲覧時には適用しない。
   yearSel.value='';
@@ -4211,26 +4314,85 @@ kp('kpAuthor').addEventListener('input',()=>{kpState.author=kp('kpAuthor').value
 kp('kpSaveDraft').addEventListener('click',()=>{
  if(!currentArea||currentArea.shape!=='polygon'||!kpPolygon(currentArea.points)){kpMsg('まず「多角形で囲む」で3点以上の範囲を確定してください。',true);return}
  const name=kp('kpDraftName').value.trim()||`調べた範囲 ${kpState.drafts.length+1}`;
- const points=kpCopy(currentArea.points);const filter=kpFilters();
- kpState.drafts.push({id:kpId('draft'),name, note:kp('kpDraftNote').value.trim(),points,filters:filter,snapshot:kpSnapshot(currentArea,filter.year),createdAt:kpNow()});
- const ok=kpStore();kpRender();kpMsg(ok?'自分用に保存しました。必要に応じて個人用JSONでもバックアップしてください。':'ブラウザ保存が使えない環境です。個人用JSONを必ず書き出してください。');
+ const points=kpCopy(currentArea.points),note=kp('kpDraftNote').value.trim();
+ const before=kpCopy(kpState.drafts);
+ if(kpEditingDraftId){
+  const d=kpState.drafts.find(x=>x.id===kpEditingDraftId);
+  if(!d){kpMsg('編集元の記録が見つかりません。',true);return;}
+  d.name=name;d.note=note;d.points=points;d.snapshot=kpSnapshot(currentArea,d.filters?.year||'');d.updatedAt=kpNow();
+ }else{
+  const filter=kpFilters();
+  kpState.drafts.push({id:kpId('draft'),name,note,points,filters:filter,snapshot:kpSnapshot(currentArea,filter.year),createdAt:kpNow()});
+ }
+ if(!kpStore()){kpState.drafts=before;kpRender();kpMsg('端末への保存に失敗しました。変更は確定していません。個人用JSONを書き出すなど保存環境を確認してください。',true);return;}
+ const updated=!!kpEditingDraftId;
+ kpEditingDraftId='';kp('kpDraftName').value='';kp('kpDraftNote').value='';kpRender();
+ kpMsg(updated?'元の記録を上書き更新しました。同じ範囲から作ったB共有の候補は自動変更しません。必要ならB共有の「編集」から修正してください。':'自分用に保存しました。次の場所は空欄から新規入力できます。B共有では保存済みの名称とメモを再利用できます。');
 });
-kp('kpSourceDraft').addEventListener('change',()=>{const d=kpState.drafts.find(x=>x.id===kp('kpSourceDraft').value);if(d)kp('kpPlaceName').value=d.name;});
+// 個人メモは、参加者が選んだときだけ「共有候補の編集欄」へ転記する。
+// この段階では提出JSONへ追加しない。元の個人メモを自動共有しない。
+let kpShareSelection='';
+let kpShareBaseName='';
+let kpShareBaseReason='';
+function kpFillShareFromDraft(d){
+ const name=d?String(d.name||'').slice(0,90):'';
+ const note=d?String(d.note||'').slice(0,1300):'';
+ kp('kpPlaceName').value=name;
+ kp('kpReason').value=note;
+ kpShareBaseName=name;
+ kpShareBaseReason=note;
+ kp('kpQuestion').value='';
+ kp('kpCommunityVoice').value='';
+ kp('kpVoiceConsent').checked=false;
+ kp('kpPlaceType').value='intersection_area';
+ kp('kpSourceType').value='map';
+ kp('kpTransferStatus').textContent=!d
+   ?'保存した範囲を選ぶと名称とメモを転記します。内容を確認してから提出候補へ追加してください。'
+   :note?'「'+name+'」の個人メモを転記しました。共有する文章として内容を確認・編集してください。'
+        :'「'+name+'」の名称を転記しました。個人メモが空欄のため、必要に応じて理由を記入してください。';
+}
+kp('kpSourceDraft').addEventListener('change',()=>{
+ if(kpEditingProposalId)return;
+ const sel=kp('kpSourceDraft');
+ const d=kpState.drafts.find(x=>x.id===sel.value);
+ const changed=kpShareSelection!==sel.value;
+ const edited=kp('kpPlaceName').value!==kpShareBaseName||kp('kpReason').value!==kpShareBaseReason
+             ||!!kp('kpQuestion').value.trim()||!!kp('kpCommunityVoice').value.trim();
+ if(changed&&kpShareSelection&&edited&&!confirm('現在編集中の提出候補の文章が新しい保存メモに置き換わります。切り替えますか？')){
+   sel.value=kpShareSelection;return;
+ }
+ kpShareSelection=d?d.id:'';
+ kpFillShareFromDraft(d);
+});
 kp('kpAddProposal').addEventListener('click',()=>{
- if(kpState.proposals.length>=KP_MAX){kpMsg('提出候補は最大3件です。',true);return}
+ if(!kpEditingProposalId&&kpState.proposals.length>=KP_MAX){kpMsg('提出候補は最大3件です。',true);return}
  const d=kpState.drafts.find(x=>x.id===kp('kpSourceDraft').value);
   const name=kp('kpPlaceName').value.trim(),reason=kp('kpReason').value.trim(),question=kp('kpQuestion').value.trim();
   const communityVoice=kp('kpCommunityVoice').value.trim();
   if(communityVoice && !kp('kpVoiceConsent').checked){kpMsg('地域の方から聞いた内容は、共有の了解と匿名化を確認してください。',true);return;}
- if(!d||!name||!reason){kpMsg('保存済みの調査範囲、場所の名前、気になった理由を入力してください。',true);return}
- if(kpState.proposals.some(p=>p.sourceDraftId===d.id)){kpMsg('この調査範囲はすでに提出候補に含まれます。',true);return}
- const area={shape:'polygon',points:d.points};
- kpState.proposals.push({proposalId:kpId('place'),sourceDraftId:d.id,placeName:name,placeType:kp('kpPlaceType').value,
-  polygon:kpToGeo(d.points),reason,onSiteQuestions:question,sourceType:kp('kpSourceType').value,
-  ...(communityVoice?{communityVoice}:{}),filters:kpCopy(d.filters),snapshot:kpSnapshot(area,d.filters.year),createdAt:kpNow(),
- // Intentional: no private notes, no provisional workspaces in shared JSON
- });
-  const ok=kpStore();kpRender();kpCommunityRender();schedule();kpMsg(ok?'提出候補へ登録しました。共有用JSONには提出候補だけが入ります。':'候補に登録しました。ブラウザ保存が使えないため共有用JSONも保存してください。');
+ if(!name||!reason){kpMsg('場所の名前と気になった理由を入力してください。',true);return}
+ const before=kpCopy(kpState.proposals);
+ const proposal=kpEditingProposalId?kpState.proposals.find(x=>x.proposalId===kpEditingProposalId):null;
+ if(kpEditingProposalId&&!proposal){kpMsg('編集元の提出候補が見つかりません。',true);return;}
+ if(!kpEditingProposalId&&(!d||kpState.proposals.some(p=>p.sourceDraftId===d.id))){kpMsg('保存範囲を選択してください。すでに候補に含まれている範囲は新たに追加できません。',true);return;}
+ const points=kpEditingProposalId?(currentArea?.shape==='polygon'&&Array.isArray(currentArea.points)?kpCopy(currentArea.points):null):kpCopy(d.points);
+ if(!kpPolygon(points)||flEdit||flPending===currentArea){kpMsg('図形が未確定です。「囲む」から図形を確定してください。',true);return;}
+ const filter=proposal?(proposal.filters||kpFilters()):(d.filters||kpFilters());
+ const newValues={placeName:name,placeType:kp('kpPlaceType').value,polygon:kpToGeo(points),reason,
+  onSiteQuestions:question,sourceType:kp('kpSourceType').value,filters:kpCopy(filter),
+  snapshot:kpSnapshot({shape:'polygon',points},filter.year||'')};
+ if(communityVoice)newValues.communityVoice=communityVoice;
+ if(proposal){
+  Object.assign(proposal,newValues);if(!communityVoice)delete proposal.communityVoice;
+  proposal.updatedAt=kpNow();
+ }else{
+  kpState.proposals.push({proposalId:kpId('place'),sourceDraftId:d.id,...newValues,createdAt:kpNow()});
+ }
+ if(!kpStore()){kpState.proposals=before;kpRender();kpMsg('提出候補の保存に失敗しました。変更を反映していません。',true);return;}
+ const updated=!!kpEditingProposalId;
+ kpEditingProposalId='';kp('kpSourceDraft').disabled=false;kpShareSelection='';kpFillShareFromDraft(null);kp('kpSourceDraft').value='';
+ kpRender();kpCommunityRender();schedule();
+ kpMsg(updated?'提出候補を更新しました。既に書き出したJSON・送信済みファイルは変わりません。必要ならB共有から再書出してください。':'提出候補へ登録しました。次の候補は保存した範囲を選ぶだけで名称・メモを再利用できます。');
 });
 kp('kpExportShared').addEventListener('click',()=>{
  if(!kpState.proposals.length||!kpState.author.trim()){kpMsg('提出候補と表示名を入力してください。',true);return}
@@ -4618,10 +4780,20 @@ function flMoveMapSmooth(dx,dy,ms=390){
     if(k<1)flPanId=requestAnimationFrame(anim);else flPanId=0;}
   flPanId=requestAnimationFrame(anim);
 }
-function flVisible(){const r=mapEl.getBoundingClientRect(),plate=flPlate.getBoundingClientRect(),left=17,right=r.width-17;
- const top=Math.min(r.height-80,Math.max(15,flGuide.hidden?17:52));
- const bottom=Math.min(r.height-12,Math.max(top+90,plate.top-r.top-17));
- return {left,right,top,bottom};}
+function flVisible(){
+ // Determine the largest usable map rectangle rather than assuming the card
+ // always covers the bottom. On desktop it covers LEFT or RIGHT; on mobile BOTTOM.
+ const r=mapEl.getBoundingClientRect(),p=flPlate.getBoundingClientRect();
+ const gap=20,top=Math.max(18,flGuide.hidden?18:53);
+ let left=gap,right=r.width-gap,bottom=r.height-gap;
+ const pl=p.left-r.left,pr=p.right-r.left,pt=p.top-r.top;
+ const availableLeft=Math.max(0,pl-gap),availableRight=Math.max(0,r.width-pr-gap);
+ const mobile=r.width<780 || Math.max(availableLeft,availableRight)<Math.max(230,r.width*.27);
+ if(mobile){bottom=Math.max(top+95,pt-gap);}
+ else if(availableRight>=availableLeft){left=pr+gap;}
+ else{right=pl-gap;}
+ return {left,right,top,bottom};
+}
 function flKeepShapeVisible(forceCenter=false){
  if(!flEdit||!currentArea||currentArea.shape!=='polygon'||flDrag)return;
  const pts=currentArea.points.map(screenOfLatLon),bound=flVisible();if(bound.bottom-bound.top<95)return;
@@ -4659,11 +4831,11 @@ function flUpdateShape(points,final=false){
 function flGenerate(n){
  flResetPan();closeViewerRangePopup();setAreaMode(null);polygonDraft=[];
  const g=mapGeom();const r=Math.max(35,Math.min(84,g.w*.17,g.h*.13));
- const x=g.w*.5,y=g.h*.42;
+ const x=g.w*.5,y=g.h*.5;
  let pts=Array.from({length:n},(_,i)=>{const a=-Math.PI/2+Math.PI*2*i/n;return pixelToLatLon(x+r*Math.cos(a),y+r*Math.sin(a));});
  currentArea={shape:'polygon',points:pts,bounds:boundsFromPoints(pts)};flPending=currentArea;
  flUndo=[];flEdit=true;flConfirmed=false;flLastDeleted=null;updateCurrentAreaUI();syncViewerPolygonUI();schedule();flPaint();flRender();
- requestAnimationFrame(()=>flKeepShapeVisible(true));
+ requestAnimationFrame(()=>requestAnimationFrame(()=>flKeepShapeVisible(true)));
 }
 function flBegin(){
  if(currentArea?.shape==='polygon'&&currentArea.points.length>=3){
@@ -4674,8 +4846,16 @@ function flBegin(){
 }
 function flConfirm(){
  if(!currentArea||currentArea.shape!=='polygon'||!flShapeValid(currentArea.points)){flToast('図形の座標または面積を確認してください');return;}
- flEdit=false;flConfirmed=true;flPending=null;flResetPan();flPaint();updateCurrentAreaUI();syncViewerPolygonUI();schedule();flRender();
- showViewerRangeFirstHintIfNeeded();requestAnimationFrame(()=>showViewerRangePopup());flToast('範囲を確定しました。地理座標は保持されています');
+ flEdit=false;flConfirmed=true;flPending=null;flResetPan();flPaint();updateCurrentAreaUI();syncViewerPolygonUI();schedule();
+ if(kpEditingDraftId||kpEditingProposalId){
+  // Return to the actual record being edited, not a new record. Nothing is persisted until save.
+  const isDraft=!!kpEditingDraftId;
+  flRoot=isDraft?'save':'share';flRender();kpRender();
+  (isDraft?kp('kpPersonalPanel'):kp('kpProposalPanel')).open=true;
+  flToast('図形を確定しました。'+(isDraft?'A保存':'B共有')+'で内容を確認し「変更を保存」を押してください');
+  return;
+ }
+ flRender();showViewerRangeFirstHintIfNeeded();requestAnimationFrame(()=>showViewerRangePopup());flToast('範囲を確定しました。地理座標は保持されています');
 }
 function flClear(){
  if(!currentArea?.points){flToast('削除する図形はありません');return;}
@@ -4718,6 +4898,7 @@ function flRender(){
   flMove('.modeSegment');flMove('#modePointsPanel');flMove('#modeDonutPanel');flMove('.statsSection');flMove('.accidentIdSearch');flMove('#fit');
  }
  if(flRoot==='polygon'){
+  if(kpEditingDraftId||kpEditingProposalId) add('<div class="flStat">保存済みの記録を編集中です。図形を調整して確定すると、'+(kpEditingDraftId?'A保存':'B共有')+'のコメント編集画面へ戻ります。確定後、「変更を保存」で元の記録を更新します。</div>');
   if(!currentArea||currentArea.shape!=='polygon'){
    add('<p class="flDesc">最初から5角形を地図上に表示します。白い頂点を動かし、内側をドラッグすると図形全体が動きます。</p><div class="flRow">'+flBtn('⬡ 5角形を作る','new5','flPrimary')+flBtn('⬢ 6角形を作る','new6')+'</div>'+(flLastDeleted?'<div class="flRow">'+flBtn('↶ 削除を戻す','restore')+'</div>':''));
   }else{
@@ -4741,12 +4922,12 @@ function flRender(){
   }
  }
  if(flRoot==='save'){
-  const shell=add('<p class="flDesc">調べた範囲と個人メモを端末に保存できます。個人用JSONは手元で保管してください。</p><div class="kihaiPart" id="flSaveShell"></div>');
+  const shell=add('<p class="flDesc">調べた範囲と個人メモを端末に保存できます。保存済みの記録は一覧の「編集」から図形と文章を変更できます。</p><div class="kihaiPart" id="flSaveShell"></div>');
   const box=shell.querySelector('#flSaveShell');flMove('#kpPersonalPanel',box);flMove('#kpMessage',box);
   if(!currentArea?.points||flEdit)add('<div class="flStat">保存する場合は「囲む」で形を確定してください。</div>');
  }
  if(flRoot==='share'){
-  const shell=add('<p class="flDesc">チームへ提出する候補は最大3件。個人メモを含むJSONとは分離しています。</p><div class="kihaiPart" id="flShareShell"></div>');
+  const shell=add('<p class="flDesc">候補は最大3件。登録済みの候補も一覧から編集できます。変更後は共有JSONを再書出してください。</p><div class="kihaiPart" id="flShareShell"></div>');
   const box=shell.querySelector('#flShareShell');flMove('#kpProposalPanel',box);flMove('#kpMessage',box);flMove('#kpCommunityHub',box);
  }
  const stat=document.getElementById('flShapeStats');
