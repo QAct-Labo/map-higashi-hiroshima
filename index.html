@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="道の気配MAP｜東広島市（仮称）— 公開情報を用いた交通事故と道路交通量を見て、地域を調べる Viewer">
-<title>道の気配MAP｜東広島市 Viewer MAP7 関連プロジェクトバナー追加 v0.7.9.8</title>
+<title>道の気配MAP｜東広島市 Viewer MAP7 関連プロジェクトバナー追加 v0.7.9.9</title>
 <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=P_WckMl9Nt43dov9poR3yeUzaJ_BaAyjaoe0Zrt6b6uLVYdBNosWeEpb3l-Iaapu1Vgkpxpu9Tdp9QanOrsM5wajMhKPQZor1uMiRRcEKl4jr9e-vLle-0T6G5E4aAMfhF4bMxuQwJTyI_W5lIg0wBDrUcvAaEHYrSQZvDBAAFW5qZkrE6RzeVFkZofpbO1-3HBlW-Nmi2Y8uCflwVuoI46eFvByTmQBH4jIMk0vsnuE6PCeJIpX2wCh9hOJ4QGL8eL8hogcPmCSyIAgHZMVsYQDQH1v1LD8LGBOJ0J6asJMu3gDeMV6PEvdIm0Ph6bzwAVXErWX8jq-OqUbGME2_XK_ABVTv2VQ8hCQX1HVzgG0kxCHI9QQfAm3DbpVcMXsoy-PL9hlfGgHAMrX_OSN4e2mJEcDMVUW2jHPb2aXXoeUpzQPNUlivtDhw9-On6AlogFALIhPQv2Fvu1C97wR6CDLHN3DPRb6p4vGy4Q7UOJdehiN6dMSyqIer99I-jdI" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jaGF0Z3B0LmNvbS9iYWNrZW5kLWFwaS9lc3R1YXJ5L2NvbnRlbnQ_aWQ9ZmlsZV8wMDAwMDAwMDE2ZTg4MjMwYjlhZTBhNTczNzgwZWQ3MyZmbj0lRTklODElOTMlRTMlODElQUUlRTYlQjAlOTclRTklODUlOERNQVBfVmlld2VyX01BUDdfJUU0JUJGJTlEJUU1JUFEJTk4JUU1JUIwJThFJUU3JUI3JTlBJUUzJTgzJUJCJUUzJTgzJTk0JUUzJTgzJUIzJUUzJTgzJTgxJUU2JTkzJThEJUU0JUJEJTlDX3YwLjcuOS41LUwuaHRtbCZjZD1hdHRhY2htZW50JnRzPTQ5ODQ2MyZwPWZzJmNpZD0xJnNpZz1kMjI0OTA2NTIzMTY5MzJmZjJjOGZiOTg3YjBjYmI4YTI1ZmZiZjUwOGYzZmEwZWVmZTdmYjdhNmJlYmFlYjRhJnY9MA"/><style>
 :root{--bg:#f5f7fa;--panel:#fff;--text:#1f2937;--muted:#667085;--line:#d0d5dd;--blue:#175cd3}
 *{box-sizing:border-box}
@@ -673,6 +673,79 @@ header .viewerBadge{flex:0 0 auto;margin-left:3px}
 @media(prefers-reduced-motion:reduce){.relatedProjectLink{transition:none!important}}
 /* END MAP7 v0.7.9.8 FINAL PANORAMA HEADER */
 
+/* MAP7 v0.7.9.9 INLINE HELP GUIDE -- independent overlay, map viewport untouched */
+#mapHelpOpen{width:auto!important;min-width:79px;height:33px;margin:0 4px 0 3px!important;padding:0 10px!important;flex:0 0 auto;display:inline-flex;justify-content:center;align-items:center;gap:4px;border:1px solid #54718c!important;border-radius:7px!important;background:#1d324a!important;color:#eff7ff!important;font-size:11px!important;font-weight:750!important;line-height:1!important;box-shadow:none!important;cursor:pointer}
+#mapHelpOpen:hover{background:#2d4764!important}
+#mapHelpOpen:focus-visible{outline:2px solid #8dd6ff;outline-offset:2px}
+#mapHelpOpen .mapHelpMark{font-weight:900;font-size:15px}
+#mapHelpLayer[hidden]{display:none!important}
+#mapHelpLayer{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:14px;background:rgba(7,18,34,.67);font-family:system-ui,-apple-system,'Segoe UI','Noto Sans JP',sans-serif;color:#203047;isolation:isolate}
+#mapHelpDialog{width:min(660px,100%);max-height:calc(100dvh - 28px);overflow:hidden;display:flex;flex-direction:column;background:#fff;border:1px solid #b8c9da;border-radius:14px;box-shadow:0 22px 65px rgba(0,0,0,.33)}
+#mapHelpTop{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid #e2e9f0;background:#f6f9fc}
+#mapHelpTop strong{font-size:15px;line-height:1.35;color:#183448}
+#mapHelpClose{width:auto!important;min-width:76px;min-height:34px;padding:6px 10px!important;margin:0!important;font-size:12px!important;border:1px solid #9bb5cd!important;background:#fff!important;color:#264761!important;border-radius:7px!important;cursor:pointer}
+#mapHelpClose:hover{background:#e8f1f9!important}
+#mapHelpBody{overflow:auto;overscroll-behavior:contain;padding:14px 17px 22px;line-height:1.65;font-size:13px;flex:1 1 auto}
+#mapHelpBody *{box-sizing:border-box}
+#mapHelpBody .mapHelpHero{width:100%;aspect-ratio:3/1;border-radius:9px;background-image:var(--related-mirror-image);background-position:center;background-size:contain;background-repeat:no-repeat;background-color:#172e4c;border:0;margin:0 0 12px}
+#mapHelpBody .mapHelpIntro{font-size:13px;margin:0 0 12px;color:#384d60}
+#mapHelpBody .mapHelpLinks{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 15px}
+#mapHelpBody .mapHelpLinks a{font-size:12px;font-weight:750;color:#165f8f;text-decoration:underline;text-underline-offset:2px}
+#mapHelpBody h3{font-size:16px;margin:16px 0 9px;color:#173747;line-height:1.35}
+#mapHelpBody .mapHelpQuick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#mapHelpBody .mapHelpStep{border:1px solid #cbdfe3;background:#f2f9fa;border-radius:8px;padding:10px;min-width:0}
+#mapHelpBody .mapHelpStep b{font-size:12px;color:#075e64;display:block;margin-bottom:5px}
+#mapHelpBody .mapHelpStep p{margin:0;font-size:11.5px;color:#304b55}
+#mapHelpBody .mapHelpSections{margin-top:16px}
+#mapHelpBody details{border:1px solid #d5e1eb;border-radius:8px;background:white;margin-bottom:8px;overflow:hidden}
+#mapHelpBody details summary{padding:10px 12px;cursor:pointer;font-size:13px;font-weight:750;color:#203f54;list-style:revert;background:#f9fbfd}
+#mapHelpBody details[open] summary{border-bottom:1px solid #e1eaf2;background:#eef7f6}
+#mapHelpBody .mapHelpDetail{padding:11px 13px;color:#384b5c}
+#mapHelpBody .mapHelpDetail p{margin:0 0 9px}
+#mapHelpBody .mapHelpDetail p:last-child{margin-bottom:0}
+#mapHelpBody .mapHelpDetail ol{margin:4px 0 8px;padding-left:23px}
+#mapHelpBody .mapHelpDetail li{margin:3px 0}
+#mapHelpBody .mapHelpCaution{border-left:4px solid #bc8734;background:#fff9ea;color:#624d28;padding:10px 12px;font-size:12px;margin-top:14px;border-radius:0 7px 7px 0}
+#mapHelpBody .mapHelpFooter{border-top:1px solid #e1e8ef;padding-top:10px;margin-top:17px;color:#667586;font-size:11px}
+#mapHelpBody a:focus-visible,#mapHelpBody summary:focus-visible,#mapHelpClose:focus-visible{outline:3px solid #80caff;outline-offset:2px}
+@media(max-width:760px){
+  #mapHelpOpen{min-width:29px;height:27px!important;padding:0 6px!important;border-radius:6px!important;margin:0!important}
+  #mapHelpOpen .mapHelpLabel{display:none}
+  #mapHelpOpen .mapHelpMark{font-size:16px}
+  #mapHelpLayer{padding:7px}
+  #mapHelpDialog{width:100%;max-height:calc(100dvh - 14px);border-radius:11px}
+  #mapHelpBody{padding:12px 12px 18px;font-size:12.5px}
+  #mapHelpBody .mapHelpQuick{grid-template-columns:1fr}
+  #mapHelpBody .mapHelpStep{padding:7px 10px}
+  #mapHelpBody .mapHelpStep b{margin:0}
+  #mapHelpTop{padding:8px 11px}
+  header{column-gap:5px!important}
+  header .viewerBadge{margin-left:0!important}
+}
+/* small mobile header: keep MAP name, 関連, ? and version without spilling over */
+@media(max-width:540px){
+ header{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;grid-template-rows:24px 13px;gap:2px 5px!important;align-content:center!important}
+ header .brandHead{grid-column:1;grid-row:1/3;min-width:0;max-width:100%}
+ header .brandTitle{min-width:0}
+ header .brandTitle h1{font-size:11px!important;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ header .brandMark{width:28px!important;height:28px!important}
+ header .relatedProjectDesktop{display:none!important}
+ header .relatedProjectMobile{display:block!important;grid-column:2;grid-row:1;justify-self:center;align-self:center;margin:0!important}
+ #mapHelpOpen{grid-column:3;grid-row:1;justify-self:end;align-self:center}
+ header .viewerBadge{grid-column:2/4;grid-row:2;justify-self:end;align-self:center;font-size:7px!important;line-height:1;min-height:11px;height:auto;padding:1px 4px!important}
+ header .viewerBadge i{width:5px;height:5px}
+}
+@media(prefers-reduced-motion:reduce){#mapHelpLayer *{scroll-behavior:auto!important}}
+/* Permanent attribution stays visible on top of map tiles, independent of sidebar scrolling. */
+#mapGsiCredit{position:absolute;z-index:23;right:9px;bottom:8px;max-width:min(420px,60%);padding:5px 8px;border:1px solid #bfcdd5;border-radius:6px;background:rgba(255,255,255,.95);color:#334559;line-height:1.45;font-size:10px;white-space:normal;overflow-wrap:anywhere;box-shadow:0 1px 4px rgba(20,38,61,.1);pointer-events:auto;user-select:text;cursor:auto}
+#mapGsiCredit a{color:#17537a!important;text-decoration:underline!important;text-underline-offset:2px;cursor:pointer;pointer-events:auto}
+#mapGsiCredit a:focus-visible{outline:2px solid #176597;outline-offset:2px}
+#map .status{bottom:40px}
+@media(max-width:760px){
+ #mapGsiCredit{right:7px;bottom:calc(71px + var(--fl-safe));max-width:calc(100% - 14px);padding:3px 6px;font-size:9px}
+ #map .status{bottom:calc(107px + var(--fl-safe))!important}
+}
+/* END MAP7 v0.7.9.9 INLINE HELP GUIDE */
 </style>
 </head>
 <body>
@@ -722,8 +795,36 @@ window.addEventListener('unhandledrejection',function(e){
     <a class="relatedProjectLink enjin" href="https://www.mirainoplus.com/latest/archive/enzinkickoff2026/" target="_blank" rel="noopener noreferrer" title="円陣2026 ミライノ＋公式ページへ" aria-label="円陣2026 ミライノ＋公式ページへ"></a>
   </div>
 </details>
-<div class="viewerBadge"><i></i> MAP7｜Viewer v0.7.9.8</div>
+<button type="button" id="mapHelpOpen" title="道の気配MAPの使い方を見る" aria-label="道の気配MAPの使い方を開く" aria-haspopup="dialog" aria-controls="mapHelpDialog"><span class="mapHelpMark" aria-hidden="true">？</span><span class="mapHelpLabel">使い方</span></button>
+<div class="viewerBadge"><i></i> MAP7｜Viewer v0.7.9.9</div>
 </header>
+<div id="mapHelpLayer" hidden>
+  <section id="mapHelpDialog" role="dialog" aria-modal="true" aria-labelledby="mapHelpTitle" tabindex="-1">
+    <div id="mapHelpTop"><strong id="mapHelpTitle">道の気配MAP｜使い方ガイド</strong><button id="mapHelpClose" type="button" aria-label="使い方ガイドを閉じる">閉じる ×</button></div>
+    <div id="mapHelpBody">
+      <div class="mapHelpHero" role="img" aria-label="夕暮れの街並みと、横断歩道を渡る歩行者、右側の歩道に設置された光るカーブミラー。光るカーブミラー実証プロジェクトの横長バナー"></div>
+      <p class="mapHelpIntro"><b>この地図について</b><br>「光るカーブミラー」実証プロジェクトの検討をきっかけに生まれた、地域の交通事故記録などを調べるための地図です。データと実際の道路環境を見比べ、気になる場所を考える入口としてお使いください。</p>
+      <p class="mapHelpLinks"><a href="https://readyfor.jp/projects/mierukosaten" target="_blank" rel="noopener noreferrer">光るカーブミラー実証プロジェクトの紹介ページを見る（別タブ）</a></p>
+      <h3>まずは、この3つを試してみましょう</h3>
+      <div class="mapHelpQuick">
+        <div class="mapHelpStep"><b>01 地図を動かす</b><p>ドラッグで移動。マウスホイールまたは「＋」「－」で拡大縮小します。</p></div>
+        <div class="mapHelpStep"><b>02 事故点を選ぶ</b><p>地図上の事故点をクリック／タップして、記録の情報を確認します。</p></div>
+        <div class="mapHelpStep"><b>03 気になる場所を探す</b><p>画面の「見る」「重ねる」「囲む」を使って、気になる道路環境を調べます。</p></div>
+      </div>
+      <div class="mapHelpSections" aria-label="操作の詳しい説明">
+        <h3>詳しい使い方</h3>
+        <details><summary>01｜「見る」：事故の表示と絞り込み</summary><div class="mapHelpDetail"><p>「見る」から、事故を1件ずつ表示するモードと、集計して表示するモードを切り替えられます。年や事故類型などの条件を絞り込んで見比べてください。</p><p>地図の中心と縮尺は、表示モードを切り替えても引き継がれます。</p></div></details>
+        <details><summary>02｜「重ねる」：ほかの情報を表示</summary><div class="mapHelpDetail"><p>道路交通量や公開されている参照情報など、用意されたレイヤーを重ねて確認します。表示・非表示を切り替え、事故の記録と現地の状況を照らし合わせるために活用してください。</p><p>各レイヤーには出典・位置精度の違いがあり、表示した位置が現地の設備や事故の正確な位置を保証するとは限りません。</p></div></details>
+        <details><summary>03｜「囲む」：範囲を決めて集計</summary><div class="mapHelpDetail"><ol><li>「囲む」を開き、六角形などの図形から始めます。</li><li>白い操作点をドラッグして輪郭を調整。内側をドラッグすると全体を動かせます。</li><li>必要なら点数や図形の方式を変更します。</li><li>形が決まったら<b>「この範囲を確定」</b>を押します。</li></ol><p>「確定」は範囲を編集し終えたという意味です。<b>記録の保存はまだ完了していません。</b></p></div></details>
+        <details><summary>04｜「AI読み」：集計内容を読み解く</summary><div class="mapHelpDetail"><p>選択範囲の集計条件を、AIに渡せる文章として作成・コピーします。<b>自動的にAIへ送信される機能ではありません。</b> 出力内容は事故の原因や危険性を断定するものではなく、現地確認の手掛かりとして扱ってください。</p></div></details>
+        <details><summary>05｜「A 保存」と「B 共有」の違い</summary><div class="mapHelpDetail"><p><b>A 保存（自分用）</b>：「囲む」で範囲を確定後、名称とメモを付けて保存できます。大切な記録は<b>「保存して個人用JSONを書き出す」</b>で端末にもバックアップしてください。</p><p><b>B 共有（チーム用）</b>：自分用に保存した範囲から、気になる場所を最大3件まで選び、共有用JSONを書き出します。<b>ファイルを作っただけでは他の人に送信されません。</b> 提出方法はチームの案内に従ってください。</p><p>個人用JSONには非公開のメモが含まれる場合があります。<b>個人用JSONをそのままSlackなどへ投稿しないでください。</b></p></div></details>
+        <details><summary>06｜保存データを別の端末・版で使う</summary><div class="mapHelpDetail"><p>HTMLを別名で保存したり、新しい版へ切り替えたりすると、ブラウザに保存した内容が引き継がれない場合があります。切り替え前に個人用JSONを保存し、新しい版の「JSON読込」から取り込んでください。</p><p>図形の編集後は、範囲を確定するだけでは保存記録を書き換えません。保存画面で「変更を保存」まで進めてください。</p></div></details>
+      </div>
+      <div class="mapHelpCaution"><b>利用上の注意：</b>事故記録が多い場所が、必ずしも光るカーブミラーの設置に適した場所とは限りません。設置候補の検討には、見通し・交通流・道路構造・現地の状況をあわせて確認する必要があります。このMAPは公表資料等をもとにした調査用のツールで、行政による設置判断を示すものではありません。</div>
+      <div class="mapHelpFooter"><p><b>背景地図の出典</b>：<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">国土地理院「地理院タイル（淡色地図）」</a>。事故記録や交通量は背景地図とは別の公開資料を使用しています。</p>道の気配MAP｜東広島市 ・ MAP7 Viewer v0.7.9.9<br>使い方ガイドは画面右上の「？使い方」からいつでも開けます。Escキーまたは「閉じる ×」で地図に戻ります。</div>
+    </div>
+  </section>
+</div>
 <div id="app">
 <aside id="side">
 <div class="viewerIntro">
@@ -1128,6 +1229,7 @@ window.addEventListener('unhandledrejection',function(e){
    <button id="closeAllPopups" title="開いている情報をすべて閉じる">全閉</button>
  </div>
  <div class="status" id="status">Viewer｜道路背景: 地理院タイル（淡色地図） / 事故点は警察庁公開データ由来・交通量はR3調査</div>
+<div id="mapGsiCredit" role="note" aria-label="背景地図の出典">背景地図：<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer" title="国土地理院 地理院タイル一覧（別タブ）">国土地理院「地理院タイル（淡色地図）」</a></div>
 </main>
 
 <div id="flPlate" aria-label="道の気配MAP 操作プレート">
@@ -5580,6 +5682,43 @@ apply();fitData();
    var detail=document.getElementById('map7RecoveryError');
    if(detail)detail.textContent='診断：画面領域、操作プレート、または事故データの初期化を確認できません。';
  }
+})();
+</script>
+<script>
+/* MAP7 v0.7.9.9 GUIDE INTERACTION. Does not read or mutate map state. */
+(()=>{
+  const openBtn=document.getElementById('mapHelpOpen');
+  const layer=document.getElementById('mapHelpLayer');
+  const dialog=document.getElementById('mapHelpDialog');
+  const closeBtn=document.getElementById('mapHelpClose');
+  if(!openBtn||!layer||!dialog||!closeBtn)return;
+  let lastFocus=null;
+  const focusables=()=>[...dialog.querySelectorAll('button:not([disabled]),a[href],summary,[tabindex]:not([tabindex="-1"])')].filter(x=>x.getClientRects().length>0);
+  function openGuide(){
+    lastFocus=document.activeElement;
+    layer.hidden=false;
+    openBtn.setAttribute('aria-expanded','true');
+    const body=document.getElementById('mapHelpBody');if(body)body.scrollTop=0;
+    closeBtn.focus({preventScroll:true});
+  }
+  function closeGuide(){
+    layer.hidden=true;
+    openBtn.setAttribute('aria-expanded','false');
+    if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});else openBtn.focus({preventScroll:true});
+  }
+  openBtn.setAttribute('aria-expanded','false');
+  openBtn.addEventListener('click',openGuide);
+  closeBtn.addEventListener('click',closeGuide);
+  layer.addEventListener('pointerdown',e=>{if(e.target===layer)closeGuide()});
+  document.addEventListener('keydown',e=>{
+    if(layer.hidden)return;
+    if(e.key==='Escape'){e.preventDefault();closeGuide();return;}
+    if(e.key==='Tab'){
+      const f=focusables();if(!f.length){e.preventDefault();dialog.focus();return;}
+      if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus();}
+      else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus();}
+    }
+  });
 })();
 </script>
 </body>
